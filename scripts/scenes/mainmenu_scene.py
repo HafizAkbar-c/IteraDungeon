@@ -1,7 +1,7 @@
 import pygame
 from scenes.base_scene import BaseScene
-from scenes.exploration_scene import ExplorationScene
 from scenes.options_scene import OptionsScene
+from scenes.outdoor_scene import OutdoorScene
 
 from utils.font_helper import FontHelper
 
@@ -28,7 +28,9 @@ class MainMenuScene(BaseScene):
     def select_option(self):
         selected_option = self.options[self.selected]
         if selected_option == "Start":
-            self.game.scene_manager.go_to(ExplorationScene(self.game))
+            # Mengubah alur game untuk dimulai dari luar ruangan
+            outdoor_scene = OutdoorScene(self.game)
+            self.game.scene_manager.go_to(outdoor_scene)
         elif selected_option == "Rename":
             self.game.scene_manager.go_to(OptionsScene(self.game))
         elif selected_option == "Exit":

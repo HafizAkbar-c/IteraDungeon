@@ -2,6 +2,7 @@ import pygame
 from scenes.base_scene import BaseScene
 from attack import Attack
 from floors import FirstFloor, SecondFloor, ThirdFloor
+from scenes.story_transition_scene import StoryTransitionScene
 
 
 class ExplorationScene(BaseScene):
@@ -12,12 +13,18 @@ class ExplorationScene(BaseScene):
         self.menu_active = False
         self.menu_options = ["Profile", "Skill Tree", "Options", "Exit to Main Menu"]
         self.menu_selected = 0
-        self.facing = "down"
+        self.facing = "right"
         self.sword = Attack(self)
 
         self.floors = [FirstFloor(), SecondFloor(), ThirdFloor()]
         self.current_floor_index = 0
         self.current_floor = self.floors[self.current_floor_index]
+
+        # Set skill dan ultimate berdasarkan lantai saat ini
+        self.game.player.set_floor_abilities(self.current_floor_index)
+
+        self.ground_color = (100, 70, 40)
+        self.background_color = (135, 206, 235)
 
     def return_to_menu(self):
         from scenes.mainmenu_scene import MainMenuScene
@@ -50,48 +57,122 @@ class ExplorationScene(BaseScene):
 
                         self.game.scene_manager.push(SkillTreeScene(self.game))
                     elif event.key == pygame.K_x:
-                        self.sword.start()
-                        self.start_battle(self.current_floor.enemy, player_first=True)
+                        if (
+                            not self.current_floor.cleared
+                            and self.check_enemy_collision()
+                        ):
+                            self.start_battle(
+                                self.current_floor.enemy, player_first=True
+                            )
+                    elif event.key == pygame.K_UP:
+                        self.current_floor.jump()
 
     def update(self):
         keys = pygame.key.get_pressed()
         if not self.menu_active:
             if keys[pygame.K_LEFT] or keys[pygame.K_a]:
                 self.current_floor.player_pos[0] -= self.player_speed
+                self.game.player.facing = "left"
+                if self.current_floor.player_pos[0] < 20:
+                    self.current_floor.player_pos[0] = 20
+
             if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
                 self.current_floor.player_pos[0] += self.player_speed
-            if keys[pygame.K_UP] or keys[pygame.K_w]:
-                self.current_floor.player_pos[1] -= self.player_speed
-            if keys[pygame.K_DOWN] or keys[pygame.K_s]:
-                self.current_floor.player_pos[1] += self.player_speed
+                self.game.player.facing = "right"
+                if (
+                    not self.current_floor.cleared
+                    and self.current_floor.player_pos[0]
+                    > self.game.screen.get_width() - 60
+                ):
+                    self.current_floor.player_pos[0] = self.game.screen.get_width() - 60
 
-            if self.current_floor.check_portal_collision(self.current_floor.player_pos):
-                if self.current_floor_index < len(self.floors) - 1:
-                    self.current_floor_index += 1
-                    self.current_floor = self.floors[self.current_floor_index]
-                else:
-                    print("Congratulations! You've completed all floors!")
+            self.current_floor.apply_gravity()
 
-            if self.sword.active:
-                self.sword.update()
+            if self.current_floor.check_reached_end():
+                self.go_to_next_floor()
+
+    def go_to_next_floor(self):
+        if self.current_floor_index < len(self.floors) - 1:
+            next_floor_index = self.current_floor_index + 1
+            next_floor = self.floors[next_floor_index]
+
+            new_exploration_scene = ExplorationScene(self.game)
+            new_exploration_scene.current_floor_index = next_floor_index
+            new_exploration_scene.current_floor = new_exploration_scene.floors[
+                next_floor_index
+            ]
+            new_exploration_scene.current_floor.player_pos[0] = 100
+
+            story_scene = StoryTransitionScene(
+                self.game,
+                next_floor.story_text,
+                new_exploration_scene,
+                delay_per_line=3.0,
+            )
+
+            self.game.scene_manager.go_to(story_scene)
+        else:
+            print("Congratulations! You've completed all floors!")
+
+    def check_enemy_collision(self):
+        if self.current_floor.enemy in self.current_floor.defeated_enemies:
+            return False
+
+        player_rect = pygame.Rect(
+            self.current_floor.player_pos[0],
+            self.current_floor.player_pos[1] - 40,
+            40,
+            40,
+        )
+
+        enemy_proximity_rect = pygame.Rect(
+            self.current_floor.enemy.rect.x - 20,
+            self.current_floor.enemy.rect.y - 20,
+            self.current_floor.enemy.rect.width + 40,
+            self.current_floor.enemy.rect.height + 40,
+        )
+
+        return player_rect.colliderect(enemy_proximity_rect)
+
+    def check_attack_hits_enemy(self):
+        if not self.sword.active:
+            return False
+
+        hitbox = self.sword.get_hitbox()
+        if self.current_floor.enemy not in self.current_floor.defeated_enemies:
+            return self.current_floor.enemy.check_hit_by(hitbox)
+        return False
 
     def render(self):
-        self.game.screen.fill((20, 20, 20))
+        self.game.screen.fill(self.background_color)
 
-        if self.current_floor.returning_from_battle:
-            self.current_floor.player_pos = (
-                self.current_floor.last_position_before_battle.copy()
-            )
-            self.current_floor.returning_from_battle = False
+        ground_rect = pygame.Rect(
+            0,
+            self.current_floor.ground_level,
+            self.game.screen.get_width(),
+            self.game.screen.get_height() - self.current_floor.ground_level,
+        )
+        pygame.draw.rect(self.game.screen, self.ground_color, ground_rect)
 
         floor_text = self.font.render(
             f"{self.current_floor.name}", True, (255, 255, 255)
         )
         self.game.screen.blit(floor_text, (10, 10))
 
-        pygame.draw.rect(
-            self.game.screen, (0, 200, 255), (*self.current_floor.player_pos, 40, 40)
+        if self.current_floor.cleared:
+            next_text = self.font.render(
+                "Go to the right to proceed to next floor", True, (255, 255, 0)
+            )
+            self.game.screen.blit(next_text, (self.game.screen.get_width() - 300, 10))
+
+        player_color = (0, 200, 255)
+        player_rect = pygame.Rect(
+            self.current_floor.player_pos[0],
+            self.current_floor.player_pos[1] - 40,
+            40,
+            40,
         )
+        pygame.draw.rect(self.game.screen, player_color, player_rect)
 
         if self.menu_active:
             overlay = pygame.Surface((300, 300))
@@ -105,8 +186,6 @@ class ExplorationScene(BaseScene):
 
         if self.current_floor.enemy not in self.current_floor.defeated_enemies:
             self.current_floor.enemy.draw(self.game.screen)
-
-        self.current_floor.draw_portal(self.game.screen)
 
     def handle_menu_selection(self):
         selected = self.menu_options[self.menu_selected]
@@ -165,4 +244,8 @@ class ExplorationScene(BaseScene):
         self.current_floor.returning_from_battle = True
         self.current_floor.in_battle = False
 
+        # Reset HP tapi jangan reset cooldown
         self.game.player.hp = 100
+
+        # Jangan panggil set_floor_abilities() di sini karena akan membuat instance skill dan ultimate baru
+        # yang akan mereset cooldown
