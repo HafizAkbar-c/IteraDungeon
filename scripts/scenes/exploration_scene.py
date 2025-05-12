@@ -39,6 +39,11 @@ class ExplorationScene(BaseScene):
             (self.game.screen.get_width(), self.game.screen.get_height()),
         )
 
+        self.generic_background = pygame.Surface(
+            (self.game.screen.get_width(), self.game.screen.get_height())
+        )
+        self.generic_background.fill((30, 30, 40))
+
     def return_to_menu(self):
         from scenes.mainmenu_scene import MainMenuScene
 
@@ -175,7 +180,7 @@ class ExplorationScene(BaseScene):
         if self.current_floor_index == 0:
             self.game.screen.blit(self.first_floor_background, (0, 0))
         else:
-            pass
+            self.game.screen.blit(self.generic_background, (0, 0))
 
         floor_text = self.font.render(
             f"{self.current_floor.name}", True, (255, 255, 255)
