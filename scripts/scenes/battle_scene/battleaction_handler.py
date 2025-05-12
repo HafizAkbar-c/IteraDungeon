@@ -1,9 +1,10 @@
 class BattleActionHandler:
-    def __init__(self, player, enemy, exploration_scene, logger):
+    def __init__(self, player, enemy, exploration_scene, logger, punch_sound=None):
         self.player = player
         self.enemy = enemy
         self.exploration_scene = exploration_scene
         self.logger = logger
+        self.punch_sound = punch_sound
         self.turn = self._determine_initial_turn(exploration_scene, player_first=True)
 
     def _determine_initial_turn(self, exploration_scene, player_first):
@@ -12,6 +13,9 @@ class BattleActionHandler:
         return "player" if player_first else "enemy"
 
     def use_attack(self):
+        if self.punch_sound:
+            self.punch_sound.play()
+
         damage = self.player.attack()
         self.enemy.hp -= damage
         self.logger.add_to_battle_log(f"{self.player.name} menyerang! Damage: {damage}")

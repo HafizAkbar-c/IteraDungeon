@@ -16,6 +16,10 @@ class OutdoorScene(BaseScene):
         self.entrance_message_visible = False
         self.facing = "front"
 
+        self.footstep_sound = pygame.mixer.Sound("scripts/assets/audio/Footstep.wav")
+        self.footstep_cooldown = 0
+        self.footstep_delay = 20
+
         self.background = pygame.image.load(
             "scripts/assets/Background/outdoor_scene.png"
         )
@@ -39,11 +43,20 @@ class OutdoorScene(BaseScene):
         if keys[pygame.K_LEFT] or keys[pygame.K_a]:
             self.player_pos[0] -= self.player_speed
             self.facing = "left"
+            if self.footstep_cooldown <= 0:
+                self.footstep_sound.play()
+                self.footstep_cooldown = self.footstep_delay
         elif keys[pygame.K_RIGHT] or keys[pygame.K_d]:
             self.player_pos[0] += self.player_speed
             self.facing = "right"
+            if self.footstep_cooldown <= 0:
+                self.footstep_sound.play()
+                self.footstep_cooldown = self.footstep_delay
         else:
             self.facing = "front"
+
+        if self.footstep_cooldown > 0:
+            self.footstep_cooldown -= 1
 
         player_rect = pygame.Rect(
             self.player_pos[0],

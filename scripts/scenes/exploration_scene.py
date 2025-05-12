@@ -18,6 +18,10 @@ class ExplorationScene(BaseScene):
         self.is_attacking = False
         self.attack_timer = 0
 
+        self.footstep_sound = pygame.mixer.Sound("scripts/assets/audio/Footstep.wav")
+        self.footstep_cooldown = 0
+        self.footstep_delay = 20
+
         self.floors = [FirstFloor(), SecondFloor(), ThirdFloor()]
         self.current_floor_index = 0
         self.current_floor = self.floors[self.current_floor_index]
@@ -88,10 +92,16 @@ class ExplorationScene(BaseScene):
                 self.current_floor.player_pos[0] -= self.player_speed
                 self.game.player.facing = "left"
                 self.facing = "left"
+                if self.footstep_cooldown <= 0:
+                    self.footstep_sound.play()
+                    self.footstep_cooldown = self.footstep_delay
             elif keys[pygame.K_RIGHT] or keys[pygame.K_d]:
                 self.current_floor.player_pos[0] += self.player_speed
                 self.game.player.facing = "right"
                 self.facing = "right"
+                if self.footstep_cooldown <= 0:
+                    self.footstep_sound.play()
+                    self.footstep_cooldown = self.footstep_delay
             else:
                 if not self.is_attacking:
                     self.facing = "front"
@@ -105,6 +115,9 @@ class ExplorationScene(BaseScene):
 
             if self.current_floor.check_reached_end():
                 self.go_to_next_floor()
+
+            if self.footstep_cooldown > 0:
+                self.footstep_cooldown -= 1
 
     def go_to_next_floor(self):
         if self.current_floor_index < len(self.floors) - 1:

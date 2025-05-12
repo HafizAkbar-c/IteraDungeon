@@ -16,6 +16,8 @@ class BattleScene(BaseScene):
         )
         self.done = False
 
+        self.punch_sound = pygame.mixer.Sound("scripts/assets/audio/Punch.wav")
+
         self.player_image = pygame.image.load(
             "scripts/assets/Main Character/front_facing.png"
         )
@@ -40,7 +42,7 @@ class BattleScene(BaseScene):
         self.logger = BattleLogger(screen_width, screen_height)
         self.ui_renderer = UIRenderer(screen_width, screen_height)
         self.action_handler = BattleActionHandler(
-            game.player, enemy, exploration_scene, self.logger
+            game.player, enemy, exploration_scene, self.logger, self.punch_sound
         )
         self.animation_manager = UltimateAnimationManager(screen_width, screen_height)
 
