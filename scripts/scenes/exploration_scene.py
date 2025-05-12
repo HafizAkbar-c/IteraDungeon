@@ -279,3 +279,48 @@ class ExplorationScene(BaseScene):
         self.current_floor.in_battle = False
 
         self.game.player.hp = 100
+
+    def show_ending(self):
+        ending_story = [
+            "Naga yang mengerikan itu akhirnya jatuh ke tanah dengan dentuman keras.",
+            "Kamu berdiri terengah-engah, nyaris tidak percaya bahwa kamu berhasil mengalahkannya.",
+            "",
+            "Tiba-tiba, dinding dungeon mulai bergetar dan retakan mulai muncul di dinding-dinding tua.",
+            "Cahaya keemasan menembus dari celah-celah retakan di langit-langit.",
+            "",
+            "Suara misterius terdengar bergema dalam kepalamu:",
+            '"Penakluk Dungeon ITERA, kau telah membersihkan kegelapan yang mengancam kampus."',
+            "",
+            "Kamu menutup mata, silau oleh cahaya yang semakin terang.",
+            "Sensasi hangat menjalar ke seluruh tubuhmu, seolah-olah kamu melayang...",
+            "",
+            "Ketika kamu membuka mata kembali, kamu terkejut menemukan dirimu...",
+            "...terbaring di bawah pohon rindang di taman kampus ITERA.",
+            "",
+            "Beberapa mahasiswa berlalu-lalang dan dosen mengajar seperti biasa.",
+            "Seolah tidak terjadi apa-apa. Seolah petualanganmu hanyalah mimpi.",
+            "",
+            "Kamu melihat jam tanganmu - hanya 10 menit berlalu sejak orientasi kampus dimulai.",
+            "",
+            "Di sampingmu, kamu menemukan sebuah medali emas dengan ukiran naga.",
+            "Bukti bahwa semua itu bukan sekadar mimpi belaka.",
+            "",
+            "Satu hal yang pasti: pengalamanmu di Dungeon ITERA telah mengubahmu.",
+            "Kamu bukan lagi mahasiswa biasa...",
+            "",
+            "Kamu adalah Penakluk Dungeon ITERA, Pembebas Kegelapan, dan Pahlawan Tersembunyi kampus.",
+            "",
+            "TAMAT",
+            "",
+            "Terima kasih telah bermain!",
+        ]
+
+        from scenes.mainmenu_scene import MainMenuScene
+
+        main_menu = MainMenuScene(self.game)
+
+        ending_scene = StoryTransitionScene(
+            self.game, ending_story, main_menu, delay_per_line=3.0
+        )
+
+        self.game.scene_manager.go_to(ending_scene)

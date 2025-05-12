@@ -1,6 +1,6 @@
 import pygame
+import time
 from scenes.base_scene import BaseScene
-from scenes.story_transition_scene import StoryTransitionScene
 
 
 class BattleScene(BaseScene):
@@ -28,6 +28,14 @@ class BattleScene(BaseScene):
             self.frame_margin,
             self.screen_height - 170,
         )
+
+        # Ultimate animation properties
+        self.is_showing_ultimate = False
+        self.ultimate_frame = 0
+        self.ultimate_frames = []
+        self.ultimate_start_time = 0
+        self.ultimate_duration = 1.0  # 1 second total for all frames
+        self._load_ultimate_frames()
 
         self.enemy_frame_size = (150, 150)
         self.enemy_frame_pos = (
@@ -107,6 +115,11 @@ class BattleScene(BaseScene):
                     self.center_enemy_image, self.center_enemy_size
                 )
 
+    def _load_ultimate_frames(self):
+        # Ini dibiarkan kosong karena frame akan diambil langsung dari Ultimate
+        # saat dibutuhkan, bukan di-preload di constructor
+        self.ultimate_frames = []
+
     def handle_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -185,6 +198,27 @@ class BattleScene(BaseScene):
         if self.game.player.ultimate_cooldown <= 0:
             damage = self.game.player.use_ultimate()
             if damage > 0:
+                # Dapatkan frame-frame dari objek Ultimate player
+                ultimate_frame_paths = self.game.player.current_ultimate.get_frames()
+
+                # Load dan scale frame-frame
+                self.ultimate_frames = []
+                for frame_path in ultimate_frame_paths:
+                    img = pygame.image.load(frame_path)
+                    img = pygame.transform.scale(
+                        img, (self.screen_width, self.screen_height)
+                    )
+                    self.ultimate_frames.append(img)
+
+                # Start the ultimate animation
+                self.is_showing_ultimate = True
+                self.ultimate_frame = 0
+                self.ultimate_start_time = time.time()
+                self.ultimate_duration = (
+                    self.game.player.current_ultimate.animation_duration
+                )
+
+                # Process the damage after animation completes in update()
                 self.enemy.hp -= damage
                 ultimate_name = self.game.player.current_ultimate.name
                 self.add_to_battle_log(
@@ -219,6 +253,21 @@ class BattleScene(BaseScene):
     def update(self):
         self.game.player.update()
 
+        # Update ultimate animation if it's active
+        if self.is_showing_ultimate:
+            current_time = time.time()
+            elapsed = current_time - self.ultimate_start_time
+
+            if elapsed >= self.ultimate_duration:
+                # Animation is complete
+                self.is_showing_ultimate = False
+            else:
+                # Calculate which frame to show based on elapsed time
+                frame_duration = self.ultimate_duration / len(self.ultimate_frames)
+                self.ultimate_frame = min(
+                    int(elapsed / frame_duration), len(self.ultimate_frames) - 1
+                )
+
         if self.done:
             return
 
@@ -231,7 +280,8 @@ class BattleScene(BaseScene):
                     self.exploration_scene.current_floor.set_turn(self.turn)
 
                 if self.exploration_scene.current_floor_index == 2:
-                    self.show_ending()
+                    # Panggil metode show_ending dari exploration_scene
+                    self.exploration_scene.show_ending()
                 else:
                     self.exploration_scene.on_battle_complete(enemy_defeated=True)
                     self.game.scene_manager.go_to(self.exploration_scene)
@@ -245,52 +295,13 @@ class BattleScene(BaseScene):
             self.done = True
             self.game.quit()
 
-    def show_ending(self):
-        ending_story = [
-            "Naga yang mengerikan itu akhirnya jatuh ke tanah dengan dentuman keras.",
-            "Kamu berdiri terengah-engah, nyaris tidak percaya bahwa kamu berhasil mengalahkannya.",
-            "",
-            "Tiba-tiba, dinding dungeon mulai bergetar dan retakan mulai muncul di dinding-dinding tua.",
-            "Cahaya keemasan menembus dari celah-celah retakan di langit-langit.",
-            "",
-            "Suara misterius terdengar bergema dalam kepalamu:",
-            '"Penakluk Dungeon ITERA, kau telah membersihkan kegelapan yang mengancam kampus."',
-            "",
-            "Kamu menutup mata, silau oleh cahaya yang semakin terang.",
-            "Sensasi hangat menjalar ke seluruh tubuhmu, seolah-olah kamu melayang...",
-            "",
-            "Ketika kamu membuka mata kembali, kamu terkejut menemukan dirimu...",
-            "...terbaring di bawah pohon rindang di taman kampus ITERA.",
-            "",
-            "Beberapa mahasiswa berlalu-lalang dan dosen mengajar seperti biasa.",
-            "Seolah tidak terjadi apa-apa. Seolah petualanganmu hanyalah mimpi.",
-            "",
-            "Kamu melihat jam tanganmu - hanya 10 menit berlalu sejak orientasi kampus dimulai.",
-            "",
-            "Di sampingmu, kamu menemukan sebuah medali emas dengan ukiran naga.",
-            "Bukti bahwa semua itu bukan sekadar mimpi belaka.",
-            "",
-            "Satu hal yang pasti: pengalamanmu di Dungeon ITERA telah mengubahmu.",
-            "Kamu bukan lagi mahasiswa biasa...",
-            "",
-            "Kamu adalah Penakluk Dungeon ITERA, Pembebas Kegelapan, dan Pahlawan Tersembunyi kampus.",
-            "",
-            "TAMAT",
-            "",
-            "Terima kasih telah bermain!",
-        ]
-
-        from scenes.mainmenu_scene import MainMenuScene
-
-        main_menu = MainMenuScene(self.game)
-
-        ending_scene = StoryTransitionScene(
-            self.game, ending_story, main_menu, delay_per_line=3.0
-        )
-
-        self.game.scene_manager.go_to(ending_scene)
-
     def render(self):
+        # If ultimate animation is showing, display it over everything
+        if self.is_showing_ultimate and self.ultimate_frame < len(self.ultimate_frames):
+            self.game.screen.blit(self.ultimate_frames[self.ultimate_frame], (0, 0))
+            return
+
+        # Regular render code continues if not showing ultimate
         self.game.screen.fill((0, 0, 0))
 
         enemy_center_pos = (self.screen_width // 2, self.screen_height // 3)

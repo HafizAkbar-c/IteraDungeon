@@ -2,12 +2,13 @@ import pygame
 from scenes.base_scene import BaseScene
 from scenes.story_transition_scene import StoryTransitionScene
 from scenes.exploration_scene import ExplorationScene
+from utils.font_helper import FontHelper
 
 
 class OutdoorScene(BaseScene):
     def __init__(self, game):
         super().__init__(game)
-        self.font = pygame.font.SysFont(None, 24)
+        self.font = FontHelper.getFont("Minecraft", 24)
         self.player_pos = [100, 450]
         self.player_speed = 5
         self.entrance_pos = [700, 440]
@@ -56,6 +57,7 @@ class OutdoorScene(BaseScene):
             self.entrance_size[0],
             self.entrance_size[1],
         )
+
         self.entrance_message_visible = player_rect.colliderect(entrance_rect)
         if self.entrance_message_visible and keys[pygame.K_RETURN]:
             self.enter_dungeon()

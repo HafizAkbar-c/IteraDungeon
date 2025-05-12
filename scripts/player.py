@@ -1,5 +1,11 @@
 import pygame
-from skill import SkillTree, Skill, Ultimate
+from skill import (
+    SkillTree,
+    Skill,
+    FireUltimate,
+    IceUltimate,
+    LightningUltimate,
+)
 
 
 class Player:
@@ -112,11 +118,9 @@ class Player:
                 cooldown=3.0,
                 description="Fire damage that burns the enemy",
             )
-            self.current_ultimate = Ultimate(
-                "Meteor",
+            self.current_ultimate = FireUltimate(
                 damage=30,
                 cooldown=5.0,
-                description="Massive fire explosion from the sky",
             )
         elif floor_index == 1:
             self.current_skill = Skill(
@@ -125,11 +129,9 @@ class Player:
                 cooldown=3.0,
                 description="Ice damage with slowdown effect",
             )
-            self.current_ultimate = Ultimate(
-                "Blizzard",
+            self.current_ultimate = IceUltimate(
                 damage=35,
                 cooldown=5.0,
-                description="Freezes all enemies in the area",
             )
         elif floor_index == 2:
             self.current_skill = Skill(
@@ -138,11 +140,9 @@ class Player:
                 cooldown=3.0,
                 description="Electric damage that paralyzes",
             )
-            self.current_ultimate = Ultimate(
-                "Thunderstorm",
+            self.current_ultimate = LightningUltimate(
                 damage=40,
                 cooldown=5.0,
-                description="Chain lightning that hits multiple times",
             )
 
     @property
