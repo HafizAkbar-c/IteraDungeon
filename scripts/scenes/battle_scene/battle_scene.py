@@ -7,7 +7,7 @@ from scenes.battle_scene.uirenderer import UIRenderer
 
 
 class BattleScene(BaseScene):
-    def __init__(self, game, enemy, player_first=True, exploration_scene=None):
+    def __init__(self, game, enemy, exploration_scene=None):
         super().__init__(game)
         self.enemy = enemy
         self.exploration_scene = exploration_scene
@@ -97,10 +97,18 @@ class BattleScene(BaseScene):
                 if self.ui_renderer.attack_button_rect.collidepoint(mouse_pos):
                     self.ui_renderer.selected_button = 0
                     self.action_handler.use_attack()
-                elif self.ui_renderer.skill_button_rect.collidepoint(mouse_pos):
+                elif (
+                    self.ui_renderer.skill_button_rect.collidepoint(mouse_pos)
+                    and self.game.player.skill_cooldown <= 0
+                ):
+                    # Only allow skill button click if not on cooldown
                     self.ui_renderer.selected_button = 1
                     self.action_handler.use_skill()
-                elif self.ui_renderer.ultimate_button_rect.collidepoint(mouse_pos):
+                elif (
+                    self.ui_renderer.ultimate_button_rect.collidepoint(mouse_pos)
+                    and self.game.player.ultimate_cooldown <= 0
+                ):
+                    # Only allow ultimate button click if not on cooldown
                     self.ui_renderer.selected_button = 2
                     damage, frame_paths = self.action_handler.use_ultimate()
                     if damage > 0 and frame_paths:

@@ -174,10 +174,27 @@ class UIRenderer:
             )
         pygame.draw.rect(screen, skill_color, self.skill_button_rect)
 
-        if player.skill_cooldown > 0:
-            skill_text = self.font.render(
-                f"Skill ({player.skill_cooldown:.1f}s)", True, (255, 255, 255)
+        if player.skill_cooldown > 0 and player.current_skill:
+            cooldown_percent = int(
+                (player.skill_cooldown / player.current_skill.cooldown) * 100
             )
+            skill_text = self.font.render(
+                f"Skill ({cooldown_percent}%)", True, (255, 255, 255)
+            )
+
+            overlay_height = int(
+                (player.skill_cooldown / player.current_skill.cooldown)
+                * self.skill_button_rect.height
+            )
+            cooldown_overlay = pygame.Rect(
+                self.skill_button_rect.x,
+                self.skill_button_rect.y
+                + self.skill_button_rect.height
+                - overlay_height,
+                self.skill_button_rect.width,
+                overlay_height,
+            )
+            pygame.draw.rect(screen, (50, 50, 50, 128), cooldown_overlay)
         else:
             skill_text = self.font.render("Skill", True, (255, 255, 255))
         skill_text_rect = skill_text.get_rect(center=self.skill_button_rect.center)
@@ -195,10 +212,27 @@ class UIRenderer:
             )
         pygame.draw.rect(screen, ultimate_color, self.ultimate_button_rect)
 
-        if player.ultimate_cooldown > 0:
-            ultimate_text = self.font.render(
-                f"Ultimate ({player.ultimate_cooldown:.1f}s)", True, (255, 255, 255)
+        if player.ultimate_cooldown > 0 and player.current_ultimate:
+            cooldown_percent = int(
+                (player.ultimate_cooldown / player.current_ultimate.cooldown) * 100
             )
+            ultimate_text = self.font.render(
+                f"Ultimate ({cooldown_percent}%)", True, (255, 255, 255)
+            )
+
+            overlay_height = int(
+                (player.ultimate_cooldown / player.current_ultimate.cooldown)
+                * self.ultimate_button_rect.height
+            )
+            cooldown_overlay = pygame.Rect(
+                self.ultimate_button_rect.x,
+                self.ultimate_button_rect.y
+                + self.ultimate_button_rect.height
+                - overlay_height,
+                self.ultimate_button_rect.width,
+                overlay_height,
+            )
+            pygame.draw.rect(screen, (50, 50, 50, 128), cooldown_overlay)
         else:
             ultimate_text = self.font.render("Ultimate", True, (255, 255, 255))
         ultimate_text_rect = ultimate_text.get_rect(

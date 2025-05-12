@@ -81,9 +81,7 @@ class ExplorationScene(BaseScene):
                         ):
                             self.is_attacking = True
                             self.attack_timer = 30
-                            self.start_battle(
-                                self.current_floor.enemy, player_first=True
-                            )
+                            self.start_battle(self.current_floor.enemy)
                         else:
                             self.is_attacking = True
                             self.attack_timer = 30
@@ -283,12 +281,12 @@ class ExplorationScene(BaseScene):
         elif option == "Exit to Main Menu":
             self.return_to_menu()
 
-    def start_battle(self, enemy, player_first):
+    def start_battle(self, enemy):
         from scenes.battle_scene.battle_scene import BattleScene
 
         self.current_floor.save_battle_position(self.current_floor.player_pos)
         self.current_floor.in_battle = True
-        self.game.scene_manager.go_to(BattleScene(self.game, enemy, player_first, self))
+        self.game.scene_manager.go_to(BattleScene(self.game, enemy, self))
 
     def on_battle_complete(self, enemy_defeated=False):
         if enemy_defeated:
