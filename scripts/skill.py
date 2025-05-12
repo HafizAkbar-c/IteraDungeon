@@ -2,12 +2,21 @@ import os
 
 
 class Skill:
-    def __init__(self, name, damage=0, cooldown=3.0, description="", unlocked=False):
+    def __init__(
+        self,
+        name,
+        damage=0,
+        cooldown=3.0,
+        description="",
+        unlocked=False,
+        required_level=1,
+    ):
         self.name = name
         self.damage = damage
         self.cooldown = cooldown
         self.description = description
         self.unlocked = unlocked
+        self.required_level = required_level
         self.cooldown_remaining = 0
 
     def can_unlock(self, player_level):
@@ -132,18 +141,21 @@ class SkillTree:
                 damage=50,
                 cooldown=10.0,
                 description="Deal heavy damage.",
+                required_level=2,
             ),
             Skill(
                 "Swift Step",
                 damage=0,
                 cooldown=20.0,
                 description="Increase speed for 3 turns.",
+                required_level=3,
             ),
             Skill(
                 "Iron Guard",
                 damage=0,
                 cooldown=20.0,
                 description="Increase defense temporarily.",
+                required_level=4,
             ),
         ]
 
