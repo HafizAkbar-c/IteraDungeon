@@ -20,6 +20,57 @@ class Player:
         self.skill_cooldown = 0
         self.ultimate_cooldown = 0
 
+        # Player images
+        self.player_size = (200, 200)
+        self._player_front = None
+        self._player_right = None
+        self._player_left = None
+        self._player_attack = None
+        self._load_images()
+
+    def _load_images(self):
+        # Load player images
+        self._player_front = pygame.image.load(
+            "scripts/assets/Main Character/front_facing.png"
+        )
+        self._player_right = pygame.image.load(
+            "scripts/assets/Main Character/right_facing.png"
+        )
+        self._player_left = pygame.image.load(
+            "scripts/assets/Main Character/left_facing.png"
+        )
+        self._player_attack = pygame.image.load(
+            "scripts/assets/Main Character/ambush.png"
+        )
+
+        # Scale images
+        self._player_front = pygame.transform.scale(
+            self._player_front, self.player_size
+        )
+        self._player_right = pygame.transform.scale(
+            self._player_right, self.player_size
+        )
+        self._player_left = pygame.transform.scale(self._player_left, self.player_size)
+        self._player_attack = pygame.transform.scale(
+            self._player_attack, self.player_size
+        )
+
+    @property
+    def front_image(self):
+        return self._player_front
+
+    @property
+    def right_image(self):
+        return self._player_right
+
+    @property
+    def left_image(self):
+        return self._player_left
+
+    @property
+    def attack_image(self):
+        return self._player_attack
+
     def attack(self):
         self.attack_active = True
         self.attack_timer = 10

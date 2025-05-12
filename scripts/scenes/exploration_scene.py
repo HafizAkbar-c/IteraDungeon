@@ -18,27 +18,6 @@ class ExplorationScene(BaseScene):
         self.is_attacking = False
         self.attack_timer = 0
 
-        self.player_front = pygame.image.load(
-            "scripts/assets/Main Character/front_facing.png"
-        )
-        self.player_right = pygame.image.load(
-            "scripts/assets/Main Character/right_facing.png"
-        )
-        self.player_left = pygame.image.load(
-            "scripts/assets/Main Character/left_facing.png"
-        )
-        self.player_attack = pygame.image.load(
-            "scripts/assets/Main Character/ambush.png"
-        )
-
-        self.player_size = (200, 200)
-        self.player_front = pygame.transform.scale(self.player_front, self.player_size)
-        self.player_right = pygame.transform.scale(self.player_right, self.player_size)
-        self.player_left = pygame.transform.scale(self.player_left, self.player_size)
-        self.player_attack = pygame.transform.scale(
-            self.player_attack, self.player_size
-        )
-
         self.floors = [FirstFloor(), SecondFloor(), ThirdFloor()]
         self.current_floor_index = 0
         self.current_floor = self.floors[self.current_floor_index]
@@ -198,7 +177,7 @@ class ExplorationScene(BaseScene):
 
         if self.is_attacking:
             self.game.screen.blit(
-                self.player_attack,
+                self.game.player.attack_image,
                 (
                     self.current_floor.player_pos[0],
                     self.current_floor.player_pos[1] - 60,
@@ -206,7 +185,7 @@ class ExplorationScene(BaseScene):
             )
         elif self.facing == "left":
             self.game.screen.blit(
-                self.player_left,
+                self.game.player.left_image,
                 (
                     self.current_floor.player_pos[0],
                     self.current_floor.player_pos[1] - 60,
@@ -214,7 +193,7 @@ class ExplorationScene(BaseScene):
             )
         elif self.facing == "right":
             self.game.screen.blit(
-                self.player_right,
+                self.game.player.right_image,
                 (
                     self.current_floor.player_pos[0],
                     self.current_floor.player_pos[1] - 60,
@@ -222,7 +201,7 @@ class ExplorationScene(BaseScene):
             )
         else:
             self.game.screen.blit(
-                self.player_front,
+                self.game.player.front_image,
                 (
                     self.current_floor.player_pos[0],
                     self.current_floor.player_pos[1] - 60,

@@ -10,25 +10,10 @@ class OutdoorScene(BaseScene):
         self.font = pygame.font.SysFont(None, 24)
         self.player_pos = [100, 450]
         self.player_speed = 5
-        self.player_size = (200, 200)
         self.entrance_pos = [700, 440]
         self.entrance_size = [80, 60]
         self.entrance_message_visible = False
         self.facing = "front"
-
-        self.player_front = pygame.image.load(
-            "scripts/assets/Main Character/front_facing.png"
-        )
-        self.player_right = pygame.image.load(
-            "scripts/assets/Main Character/right_facing.png"
-        )
-        self.player_left = pygame.image.load(
-            "scripts/assets/Main Character/left_facing.png"
-        )
-
-        self.player_front = pygame.transform.scale(self.player_front, self.player_size)
-        self.player_right = pygame.transform.scale(self.player_right, self.player_size)
-        self.player_left = pygame.transform.scale(self.player_left, self.player_size)
 
         self.background = pygame.image.load(
             "scripts/assets/Background/outdoor_scene.png"
@@ -62,8 +47,8 @@ class OutdoorScene(BaseScene):
         player_rect = pygame.Rect(
             self.player_pos[0],
             self.player_pos[1] - 60,
-            self.player_size[0],
-            self.player_size[1],
+            self.game.player.player_size[0],
+            self.game.player.player_size[1],
         )
         entrance_rect = pygame.Rect(
             self.entrance_pos[0],
@@ -94,15 +79,18 @@ class OutdoorScene(BaseScene):
 
         if self.facing == "left":
             self.game.screen.blit(
-                self.player_left, (self.player_pos[0], self.player_pos[1] - 60)
+                self.game.player.left_image,
+                (self.player_pos[0], self.player_pos[1] - 60),
             )
         elif self.facing == "right":
             self.game.screen.blit(
-                self.player_right, (self.player_pos[0], self.player_pos[1] - 60)
+                self.game.player.right_image,
+                (self.player_pos[0], self.player_pos[1] - 60),
             )
         else:
             self.game.screen.blit(
-                self.player_front, (self.player_pos[0], self.player_pos[1] - 60)
+                self.game.player.front_image,
+                (self.player_pos[0], self.player_pos[1] - 60),
             )
 
         if self.entrance_message_visible:
