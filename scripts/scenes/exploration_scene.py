@@ -191,38 +191,35 @@ class ExplorationScene(BaseScene):
             )
             self.game.screen.blit(next_text, (self.game.screen.get_width() - 300, 10))
 
+        player_x = self.current_floor.player_pos[0]
+        player_y = self.current_floor.player_pos[1] - 60
+
         if self.is_attacking:
             self.game.screen.blit(
                 self.game.player.attack_image,
-                (
-                    self.current_floor.player_pos[0],
-                    self.current_floor.player_pos[1] - 60,
-                ),
+                (player_x, player_y),
             )
         elif self.facing == "left":
             self.game.screen.blit(
                 self.game.player.left_image,
-                (
-                    self.current_floor.player_pos[0],
-                    self.current_floor.player_pos[1] - 60,
-                ),
+                (player_x, player_y),
             )
         elif self.facing == "right":
             self.game.screen.blit(
                 self.game.player.right_image,
-                (
-                    self.current_floor.player_pos[0],
-                    self.current_floor.player_pos[1] - 60,
-                ),
+                (player_x, player_y),
             )
         else:
             self.game.screen.blit(
                 self.game.player.front_image,
-                (
-                    self.current_floor.player_pos[0],
-                    self.current_floor.player_pos[1] - 60,
-                ),
+                (player_x, player_y),
             )
+
+        name_text = self.font.render(self.game.player.name, True, (255, 255, 255))
+        name_rect = name_text.get_rect(
+            center=(player_x + self.game.player.player_size[0] // 2, player_y - 20)
+        )
+        self.game.screen.blit(name_text, name_rect)
 
         if self.menu_active:
             overlay = pygame.Surface((300, 300))

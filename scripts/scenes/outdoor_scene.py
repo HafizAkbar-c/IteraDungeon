@@ -108,6 +108,16 @@ class OutdoorScene(BaseScene):
                 (self.player_pos[0], self.player_pos[1] - 60),
             )
 
+        # Render player name
+        name_text = self.font.render(self.game.player.name, True, (255, 255, 255))
+        name_rect = name_text.get_rect(
+            center=(
+                self.player_pos[0] + self.game.player.player_size[0] // 2,
+                self.player_pos[1] - 80,
+            )
+        )
+        self.game.screen.blit(name_text, name_rect)
+
         if self.entrance_message_visible:
             hint_text = self.font.render(
                 "Tekan ENTER untuk masuk ke dungeon", True, (255, 255, 255)
