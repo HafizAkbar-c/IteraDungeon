@@ -25,6 +25,11 @@ class ExplorationScene(BaseScene):
 
         self.ground_color = (100, 70, 40)
         self.background_color = (135, 206, 235)
+        
+        # Load background image for first floor
+        self.first_floor_background = pygame.image.load("scripts/assets/Background/first_floor_scene.png")
+        # Scale background to fit screen size
+        self.first_floor_background = pygame.transform.scale(self.first_floor_background, (self.game.screen.get_width(), self.game.screen.get_height()))
 
     def return_to_menu(self):
         from scenes.mainmenu_scene import MainMenuScene
@@ -144,15 +149,20 @@ class ExplorationScene(BaseScene):
         return False
 
     def render(self):
-        self.game.screen.fill(self.background_color)
-
-        ground_rect = pygame.Rect(
-            0,
-            self.current_floor.ground_level,
-            self.game.screen.get_width(),
-            self.game.screen.get_height() - self.current_floor.ground_level,
-        )
-        pygame.draw.rect(self.game.screen, self.ground_color, ground_rect)
+        # If we're on the first floor, use the first floor background image
+        if self.current_floor_index == 0:
+            self.game.screen.blit(self.first_floor_background, (0, 0))
+        else:
+            # Original background rendering for other floors
+            self.game.screen.fill(self.background_color)
+            
+            ground_rect = pygame.Rect(
+                0,
+                self.current_floor.ground_level,
+                self.game.screen.get_width(),
+                self.game.screen.get_height() - self.current_floor.ground_level,
+            )
+            pygame.draw.rect(self.game.screen, self.ground_color, ground_rect)
 
         floor_text = self.font.render(
             f"{self.current_floor.name}", True, (255, 255, 255)

@@ -16,6 +16,10 @@ class OutdoorScene(BaseScene):
         self.entrance_pos = [700, 390]
         self.entrance_size = [80, 60]
         self.entrance_message_visible = False
+        # Load background image
+        self.background = pygame.image.load("scripts/assets/Background/outdoor_scene.png")
+        # Scale background to fit screen size
+        self.background = pygame.transform.scale(self.background, (self.game.screen.get_width(), self.game.screen.get_height()))
 
     def handle_events(self):
         for event in pygame.event.get():
@@ -68,16 +72,13 @@ class OutdoorScene(BaseScene):
         self.game.scene_manager.go_to(transition_scene)
 
     def render(self):
-        self.game.screen.fill(self.sky_color)
-        ground_rect = pygame.Rect(0, 400, self.game.screen.get_width(), 200)
-        pygame.draw.rect(self.game.screen, self.ground_color, ground_rect)
-        entrance_rect = pygame.Rect(
-            self.entrance_pos[0],
-            self.entrance_pos[1] - 30,
-            self.entrance_size[0],
-            self.entrance_size[1],
-        )
-        pygame.draw.rect(self.game.screen, (50, 50, 50), entrance_rect)
+        # Draw background image instead of solid color
+        self.game.screen.blit(self.background, (0, 0))
+        
+        # Dungeon entrance is now invisible (removed drawing code)
+        # but the collision area is still functional
+        
+        # Draw player
         player_color = (0, 200, 255)
         player_rect = pygame.Rect(
             self.player_pos[0],
@@ -86,6 +87,8 @@ class OutdoorScene(BaseScene):
             self.player_size,
         )
         pygame.draw.rect(self.game.screen, player_color, player_rect)
+        
+        # Display hint text if player is near entrance
         if self.entrance_message_visible:
             hint_text = self.font.render(
                 "Tekan ENTER untuk masuk ke dungeon", True, (255, 255, 255)

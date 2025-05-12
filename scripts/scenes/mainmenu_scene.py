@@ -13,6 +13,14 @@ class MainMenuScene(BaseScene):
         self.options = ["Start", "Rename", "Exit"]
         self.selected = 0
 
+        self.background = pygame.image.load(
+            "scripts/assets/Background/main_menu_scene.png"
+        )
+        self.background = pygame.transform.scale(
+            self.background,
+            (self.game.screen.get_width(), self.game.screen.get_height()),
+        )
+
     def handle_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -28,7 +36,6 @@ class MainMenuScene(BaseScene):
     def select_option(self):
         selected_option = self.options[self.selected]
         if selected_option == "Start":
-            # Mengubah alur game untuk dimulai dari luar ruangan
             outdoor_scene = OutdoorScene(self.game)
             self.game.scene_manager.go_to(outdoor_scene)
         elif selected_option == "Rename":
@@ -37,7 +44,8 @@ class MainMenuScene(BaseScene):
             self.game.running = False
 
     def render(self):
-        self.game.screen.fill((30, 30, 30))
+        self.game.screen.blit(self.background, (0, 0))
+
         screen_width = self.game.screen.get_width()
         screen_height = self.game.screen.get_height()
         for i, option in enumerate(self.options):
