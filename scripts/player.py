@@ -38,13 +38,13 @@ class Player:
             "scripts/assets/Main Character/front_facing.png"
         )
         self._player_right = pygame.image.load(
-            "scripts/assets/Main Character/right_facing.png"
+            "scripts/assets/Main Character/jalan00000.png"
         )
         self._player_left = pygame.image.load(
             "scripts/assets/Main Character/left_facing.png"
         )
         self._player_attack = pygame.image.load(
-            "scripts/assets/Main Character/ambush.png"
+            "scripts/assets/Main Character/Action_00004.png"
         )
 
         self._player_front = pygame.transform.scale(
