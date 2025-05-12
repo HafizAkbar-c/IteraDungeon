@@ -26,7 +26,6 @@ class Player:
         self.skill_cooldown = 0
         self.ultimate_cooldown = 0
 
-        # Player images
         self.player_size = (200, 200)
         self._player_front = None
         self._player_right = None
@@ -35,7 +34,6 @@ class Player:
         self._load_images()
 
     def _load_images(self):
-        # Load player images
         self._player_front = pygame.image.load(
             "scripts/assets/Main Character/front_facing.png"
         )
@@ -49,7 +47,6 @@ class Player:
             "scripts/assets/Main Character/ambush.png"
         )
 
-        # Scale images
         self._player_front = pygame.transform.scale(
             self._player_front, self.player_size
         )
