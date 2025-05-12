@@ -19,9 +19,28 @@ class BattleScene(BaseScene):
         self.punch_sound = pygame.mixer.Sound("scripts/assets/audio/Punch.wav")
 
         self.player_image = pygame.image.load(
-            "scripts/assets/Main Character/front_facing.png"
+            "scripts/assets/Background/Floor 1 battle/border1_00000.png"
         )
-        self.player_image = pygame.transform.scale(self.player_image, (130, 130))
+        self.player_image = pygame.transform.scale(self.player_image, (150, 150))
+
+        self.background_image = pygame.image.load("scripts/assets/Background/Floor 1 battle/Comp 1_00000.png")
+        self.background_image = pygame.transform.scale(
+            self.background_image,
+            (self.game.screen.get_width(), self.game.screen.get_height())
+        )
+
+        self.border_player = pygame.image.load("scripts/assets/Background/Floor 1 battle/border1_00000.png")
+        self.border_player = pygame.transform.scale(self.border_player, (300, 150))
+
+        self.border_enemy = pygame.image.load("scripts/assets/Background/Floor 1 battle/border2_00000.png")
+        self.border_enemy = pygame.transform.scale(self.border_enemy, (300, 150))
+
+        self.center_goblin_idle = pygame.image.load("scripts/assets/Background/Floor 1 battle/goblin_00002.png")
+        self.center_goblin_boss = pygame.image.load("scripts/assets/Background/Floor 1 battle/goblin2_00002.png")
+
+        self.center_goblin_idle = pygame.transform.scale(self.center_goblin_idle, (200, 200))
+        self.center_goblin_boss = pygame.transform.scale(self.center_goblin_boss, (200, 200))
+
 
         self.enemy_image = None
         self.center_enemy_image = None
@@ -49,15 +68,19 @@ class BattleScene(BaseScene):
     def _load_enemy_images(self):
         if hasattr(self.enemy, "enemy_type"):
             if self.enemy.enemy_type == "Goblin":
-                self.enemy_image = pygame.image.load("scripts/assets/Boss/goblin.png")
-                self.enemy_image = pygame.transform.scale(self.enemy_image, (130, 130))
+                self.enemy_image = pygame.image.load("scripts/assets/Background/Floor 1 battle/border2_00000.png")
+                self.enemy_image = pygame.transform.scale(self.enemy_image, (150, 150))
 
-                self.center_enemy_image = pygame.image.load(
-                    "scripts/assets/Boss/goblin.png"
-                )
-                self.center_enemy_image = pygame.transform.scale(
-                    self.center_enemy_image, (200, 200)
-                )
+                goblin_frame1 = pygame.image.load("scripts/assets/Background/Floor 1 battle/goblin_00002.png")
+                goblin_frame2 = pygame.image.load("scripts/assets/Background/Floor 1 battle/goblin2_00002.png")
+
+                goblin_frame1 = pygame.transform.scale(goblin_frame1, (500, 500))
+                goblin_frame2 = pygame.transform.scale(goblin_frame2, (500, 500))
+
+                self.center_enemy_frames = [goblin_frame1, goblin_frame2]
+                self.current_enemy_frame = 0
+                self.enemy_frame_timer = 0
+                self.enemy_frame_interval = 1000
 
     def handle_events(self):
         for event in pygame.event.get():
@@ -126,6 +149,11 @@ class BattleScene(BaseScene):
 
         if self.done:
             return
+        
+        self.enemy_frame_timer += self.game.clock.get_time()
+        if self.enemy_frame_timer >= self.enemy_frame_interval:
+            self.enemy_frame_timer = 0
+            self.current_enemy_frame = (self.current_enemy_frame + 1) % len(self.center_enemy_frames)
 
         self._check_battle_outcome()
 
@@ -159,10 +187,15 @@ class BattleScene(BaseScene):
         if self.animation_manager.render(self.game.screen):
             return
 
-        self.game.screen.fill((0, 0, 0))
+        self.game.screen.blit(self.background_image, (0, 0))
+
+        if hasattr(self, "center_enemy_frames"):
+            current_center_image = self.center_enemy_frames[self.current_enemy_frame]
+        else:
+            current_center_image = self.center_enemy_image
 
         self.ui_renderer.render_enemy(
-            self.game.screen, self.enemy, self.enemy_image, self.center_enemy_image
+        self.game.screen, self.enemy, self.enemy_image, current_center_image
         )
 
         self.ui_renderer.render_player(

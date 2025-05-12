@@ -96,8 +96,8 @@ class UIRenderer:
         screen.blit(player_atk, (text_x, self.player_frame_pos[1] - 20))
 
     def render_enemy(self, screen, enemy, enemy_image, center_enemy_image):
-        enemy_center_pos = (self.screen_width // 2, self.screen_height // 3)
-        enemy_size = self.center_enemy_size
+        enemy_center_pos = (self.screen_width // 2, self.screen_height // 2)
+        enemy_size = center_enemy_image.get_size()
         enemy_rect = pygame.Rect(
             enemy_center_pos[0] - enemy_size[0] // 2,
             enemy_center_pos[1] - enemy_size[1] // 2,
@@ -106,6 +106,14 @@ class UIRenderer:
         )
 
         if center_enemy_image:
+            enemy_size = center_enemy_image.get_size()
+            enemy_center_pos = (self.screen_width // 2, int(self.screen_height * 0.6))
+            enemy_rect = pygame.Rect(
+            enemy_center_pos[0] - enemy_size[0] // 2,
+            enemy_center_pos[1] - enemy_size[1] // 2,
+            enemy_size[0],
+            enemy_size[1],
+            )
             screen.blit(center_enemy_image, enemy_rect)
         else:
             pygame.draw.rect(screen, (255, 50, 50), enemy_rect)
