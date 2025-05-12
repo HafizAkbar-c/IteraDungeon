@@ -13,23 +13,48 @@ class ExplorationScene(BaseScene):
         self.menu_active = False
         self.menu_options = ["Profile", "Skill Tree", "Options", "Exit to Main Menu"]
         self.menu_selected = 0
-        self.facing = "right"
+        self.facing = "front"
         self.sword = Attack(self)
+        self.is_attacking = False
+        self.attack_timer = 0
+
+        self.player_front = pygame.image.load(
+            "scripts/assets/Main Character/front_facing.png"
+        )
+        self.player_right = pygame.image.load(
+            "scripts/assets/Main Character/right_facing.png"
+        )
+        self.player_left = pygame.image.load(
+            "scripts/assets/Main Character/left_facing.png"
+        )
+        self.player_attack = pygame.image.load(
+            "scripts/assets/Main Character/ambush.png"
+        )
+
+        self.player_size = (200, 200)
+        self.player_front = pygame.transform.scale(self.player_front, self.player_size)
+        self.player_right = pygame.transform.scale(self.player_right, self.player_size)
+        self.player_left = pygame.transform.scale(self.player_left, self.player_size)
+        self.player_attack = pygame.transform.scale(
+            self.player_attack, self.player_size
+        )
 
         self.floors = [FirstFloor(), SecondFloor(), ThirdFloor()]
         self.current_floor_index = 0
         self.current_floor = self.floors[self.current_floor_index]
 
-        # Set skill dan ultimate berdasarkan lantai saat ini
         self.game.player.set_floor_abilities(self.current_floor_index)
 
         self.ground_color = (100, 70, 40)
         self.background_color = (135, 206, 235)
-        
-        # Load background image for first floor
-        self.first_floor_background = pygame.image.load("scripts/assets/Background/first_floor_scene.png")
-        # Scale background to fit screen size
-        self.first_floor_background = pygame.transform.scale(self.first_floor_background, (self.game.screen.get_width(), self.game.screen.get_height()))
+
+        self.first_floor_background = pygame.image.load(
+            "scripts/assets/Background/first_floor_scene.png"
+        )
+        self.first_floor_background = pygame.transform.scale(
+            self.first_floor_background,
+            (self.game.screen.get_width(), self.game.screen.get_height()),
+        )
 
     def return_to_menu(self):
         from scenes.mainmenu_scene import MainMenuScene
@@ -66,9 +91,14 @@ class ExplorationScene(BaseScene):
                             not self.current_floor.cleared
                             and self.check_enemy_collision()
                         ):
+                            self.is_attacking = True
+                            self.attack_timer = 30
                             self.start_battle(
                                 self.current_floor.enemy, player_first=True
                             )
+                        else:
+                            self.is_attacking = True
+                            self.attack_timer = 30
                     elif event.key == pygame.K_UP:
                         self.current_floor.jump()
 
@@ -78,18 +108,19 @@ class ExplorationScene(BaseScene):
             if keys[pygame.K_LEFT] or keys[pygame.K_a]:
                 self.current_floor.player_pos[0] -= self.player_speed
                 self.game.player.facing = "left"
-                if self.current_floor.player_pos[0] < 20:
-                    self.current_floor.player_pos[0] = 20
-
-            if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
+                self.facing = "left"
+            elif keys[pygame.K_RIGHT] or keys[pygame.K_d]:
                 self.current_floor.player_pos[0] += self.player_speed
                 self.game.player.facing = "right"
-                if (
-                    not self.current_floor.cleared
-                    and self.current_floor.player_pos[0]
-                    > self.game.screen.get_width() - 60
-                ):
-                    self.current_floor.player_pos[0] = self.game.screen.get_width() - 60
+                self.facing = "right"
+            else:
+                if not self.is_attacking:
+                    self.facing = "front"
+
+            if self.is_attacking:
+                self.attack_timer -= 1
+                if self.attack_timer <= 0:
+                    self.is_attacking = False
 
             self.current_floor.apply_gravity()
 
@@ -149,20 +180,10 @@ class ExplorationScene(BaseScene):
         return False
 
     def render(self):
-        # If we're on the first floor, use the first floor background image
         if self.current_floor_index == 0:
             self.game.screen.blit(self.first_floor_background, (0, 0))
         else:
-            # Original background rendering for other floors
-            self.game.screen.fill(self.background_color)
-            
-            ground_rect = pygame.Rect(
-                0,
-                self.current_floor.ground_level,
-                self.game.screen.get_width(),
-                self.game.screen.get_height() - self.current_floor.ground_level,
-            )
-            pygame.draw.rect(self.game.screen, self.ground_color, ground_rect)
+            pass
 
         floor_text = self.font.render(
             f"{self.current_floor.name}", True, (255, 255, 255)
@@ -175,14 +196,38 @@ class ExplorationScene(BaseScene):
             )
             self.game.screen.blit(next_text, (self.game.screen.get_width() - 300, 10))
 
-        player_color = (0, 200, 255)
-        player_rect = pygame.Rect(
-            self.current_floor.player_pos[0],
-            self.current_floor.player_pos[1] - 40,
-            40,
-            40,
-        )
-        pygame.draw.rect(self.game.screen, player_color, player_rect)
+        if self.is_attacking:
+            self.game.screen.blit(
+                self.player_attack,
+                (
+                    self.current_floor.player_pos[0],
+                    self.current_floor.player_pos[1] - 60,
+                ),
+            )
+        elif self.facing == "left":
+            self.game.screen.blit(
+                self.player_left,
+                (
+                    self.current_floor.player_pos[0],
+                    self.current_floor.player_pos[1] - 60,
+                ),
+            )
+        elif self.facing == "right":
+            self.game.screen.blit(
+                self.player_right,
+                (
+                    self.current_floor.player_pos[0],
+                    self.current_floor.player_pos[1] - 60,
+                ),
+            )
+        else:
+            self.game.screen.blit(
+                self.player_front,
+                (
+                    self.current_floor.player_pos[0],
+                    self.current_floor.player_pos[1] - 60,
+                ),
+            )
 
         if self.menu_active:
             overlay = pygame.Surface((300, 300))
@@ -254,8 +299,4 @@ class ExplorationScene(BaseScene):
         self.current_floor.returning_from_battle = True
         self.current_floor.in_battle = False
 
-        # Reset HP tapi jangan reset cooldown
         self.game.player.hp = 100
-
-        # Jangan panggil set_floor_abilities() di sini karena akan membuat instance skill dan ultimate baru
-        # yang akan mereset cooldown

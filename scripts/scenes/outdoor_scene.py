@@ -8,18 +8,35 @@ class OutdoorScene(BaseScene):
     def __init__(self, game):
         super().__init__(game)
         self.font = pygame.font.SysFont(None, 24)
-        self.player_pos = [100, 400]
+        self.player_pos = [100, 450]
         self.player_speed = 5
-        self.player_size = 40
-        self.sky_color = (135, 206, 235)
-        self.ground_color = (139, 69, 19)
-        self.entrance_pos = [700, 390]
+        self.player_size = (200, 200)
+        self.entrance_pos = [700, 440]
         self.entrance_size = [80, 60]
         self.entrance_message_visible = False
-        # Load background image
-        self.background = pygame.image.load("scripts/assets/Background/outdoor_scene.png")
-        # Scale background to fit screen size
-        self.background = pygame.transform.scale(self.background, (self.game.screen.get_width(), self.game.screen.get_height()))
+        self.facing = "front"
+
+        self.player_front = pygame.image.load(
+            "scripts/assets/Main Character/front_facing.png"
+        )
+        self.player_right = pygame.image.load(
+            "scripts/assets/Main Character/right_facing.png"
+        )
+        self.player_left = pygame.image.load(
+            "scripts/assets/Main Character/left_facing.png"
+        )
+
+        self.player_front = pygame.transform.scale(self.player_front, self.player_size)
+        self.player_right = pygame.transform.scale(self.player_right, self.player_size)
+        self.player_left = pygame.transform.scale(self.player_left, self.player_size)
+
+        self.background = pygame.image.load(
+            "scripts/assets/Background/outdoor_scene.png"
+        )
+        self.background = pygame.transform.scale(
+            self.background,
+            (self.game.screen.get_width(), self.game.screen.get_height()),
+        )
 
     def handle_events(self):
         for event in pygame.event.get():
@@ -35,17 +52,18 @@ class OutdoorScene(BaseScene):
         keys = pygame.key.get_pressed()
         if keys[pygame.K_LEFT] or keys[pygame.K_a]:
             self.player_pos[0] -= self.player_speed
-            if self.player_pos[0] < 20:
-                self.player_pos[0] = 20
-        if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
+            self.facing = "left"
+        elif keys[pygame.K_RIGHT] or keys[pygame.K_d]:
             self.player_pos[0] += self.player_speed
-            if self.player_pos[0] > self.game.screen.get_width() - 60:
-                self.player_pos[0] = self.game.screen.get_width() - 60
+            self.facing = "right"
+        else:
+            self.facing = "front"
+
         player_rect = pygame.Rect(
             self.player_pos[0],
-            self.player_pos[1] - 40,
-            self.player_size,
-            self.player_size,
+            self.player_pos[1] - 60,
+            self.player_size[0],
+            self.player_size[1],
         )
         entrance_rect = pygame.Rect(
             self.entrance_pos[0],
@@ -72,23 +90,21 @@ class OutdoorScene(BaseScene):
         self.game.scene_manager.go_to(transition_scene)
 
     def render(self):
-        # Draw background image instead of solid color
         self.game.screen.blit(self.background, (0, 0))
-        
-        # Dungeon entrance is now invisible (removed drawing code)
-        # but the collision area is still functional
-        
-        # Draw player
-        player_color = (0, 200, 255)
-        player_rect = pygame.Rect(
-            self.player_pos[0],
-            self.player_pos[1] - 40,
-            self.player_size,
-            self.player_size,
-        )
-        pygame.draw.rect(self.game.screen, player_color, player_rect)
-        
-        # Display hint text if player is near entrance
+
+        if self.facing == "left":
+            self.game.screen.blit(
+                self.player_left, (self.player_pos[0], self.player_pos[1] - 60)
+            )
+        elif self.facing == "right":
+            self.game.screen.blit(
+                self.player_right, (self.player_pos[0], self.player_pos[1] - 60)
+            )
+        else:
+            self.game.screen.blit(
+                self.player_front, (self.player_pos[0], self.player_pos[1] - 60)
+            )
+
         if self.entrance_message_visible:
             hint_text = self.font.render(
                 "Tekan ENTER untuk masuk ke dungeon", True, (255, 255, 255)

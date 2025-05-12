@@ -11,8 +11,10 @@ class BattleScene(BaseScene):
 
         if exploration_scene and exploration_scene.current_floor:
             self.turn = exploration_scene.current_floor.current_turn
+            self.current_floor_index = exploration_scene.current_floor_index
         else:
             self.turn = "player" if player_first else "enemy"
+            self.current_floor_index = 0
 
         self.font = pygame.font.SysFont(None, 30)
         self.small_font = pygame.font.SysFont(None, 20)
@@ -82,6 +84,27 @@ class BattleScene(BaseScene):
                 self.game.player.set_floor_abilities(
                     exploration_scene.current_floor_index
                 )
+
+        # Load player and enemy images
+        self.player_image = pygame.image.load(
+            "scripts/assets/Main Character/front_facing.png"
+        )
+        self.player_image = pygame.transform.scale(self.player_image, (130, 130))
+        
+        # Load enemy images based on floor
+        self.enemy_image = None
+        if hasattr(self.enemy, "enemy_type"):
+            if self.enemy.enemy_type == "Goblin":
+                self.enemy_image = pygame.image.load("scripts/assets/Boss/goblin.png")
+                self.enemy_image = pygame.transform.scale(self.enemy_image, (130, 130))
+        
+        # Center battle enemy image - make it larger for better visibility
+        self.center_enemy_size = (200, 200)
+        self.center_enemy_image = None
+        if hasattr(self.enemy, "enemy_type"):
+            if self.enemy.enemy_type == "Goblin":
+                self.center_enemy_image = pygame.image.load("scripts/assets/Boss/goblin.png")
+                self.center_enemy_image = pygame.transform.scale(self.center_enemy_image, self.center_enemy_size)
 
     def handle_events(self):
         for event in pygame.event.get():
@@ -269,16 +292,24 @@ class BattleScene(BaseScene):
     def render(self):
         self.game.screen.fill((0, 0, 0))
 
+        # Draw center enemy with goblin image for first floor
         enemy_center_pos = (self.screen_width // 2, self.screen_height // 3)
-        enemy_size = (100, 100)
+        enemy_size = self.center_enemy_size
         enemy_rect = pygame.Rect(
             enemy_center_pos[0] - enemy_size[0] // 2,
             enemy_center_pos[1] - enemy_size[1] // 2,
             enemy_size[0],
             enemy_size[1],
         )
-        pygame.draw.rect(self.game.screen, (255, 50, 50), enemy_rect)
+        
+        # Draw the enemy image in the center
+        if self.center_enemy_image:
+            self.game.screen.blit(self.center_enemy_image, enemy_rect)
+        else:
+            # Fallback to red rectangle if no image
+            pygame.draw.rect(self.game.screen, (255, 50, 50), enemy_rect)
 
+        # Player frame in bottom left with image
         player_frame_rect = pygame.Rect(
             self.player_frame_pos[0],
             self.player_frame_pos[1],
@@ -286,10 +317,13 @@ class BattleScene(BaseScene):
             self.player_frame_size[1],
         )
         pygame.draw.rect(self.game.screen, (100, 100, 100), player_frame_rect)
-        pygame.draw.rect(
-            self.game.screen, (0, 200, 255), player_frame_rect.inflate(-20, -20)
-        )
+        
+        # Draw player image in the frame
+        player_image_rect = self.player_image.get_rect()
+        player_image_rect.center = player_frame_rect.center
+        self.game.screen.blit(self.player_image, player_image_rect)
 
+        # Player HP bar and stats
         hp_percent = max(0, self.game.player.hp / 100)
         hp_width = int(self.player_frame_size[0] * hp_percent)
         hp_rect = pygame.Rect(
@@ -322,6 +356,7 @@ class BattleScene(BaseScene):
         self.game.screen.blit(player_hp, (text_x, self.player_frame_pos[1] - 45))
         self.game.screen.blit(player_atk, (text_x, self.player_frame_pos[1] - 20))
 
+        # Enemy frame in bottom right with goblin image
         enemy_frame_rect = pygame.Rect(
             self.enemy_frame_pos[0],
             self.enemy_frame_pos[1],
@@ -329,10 +364,19 @@ class BattleScene(BaseScene):
             self.enemy_frame_size[1],
         )
         pygame.draw.rect(self.game.screen, (100, 100, 100), enemy_frame_rect)
-        pygame.draw.rect(
-            self.game.screen, (255, 50, 50), enemy_frame_rect.inflate(-20, -20)
-        )
+        
+        # Draw enemy image in the frame
+        if self.enemy_image:
+            enemy_image_rect = self.enemy_image.get_rect()
+            enemy_image_rect.center = enemy_frame_rect.center
+            self.game.screen.blit(self.enemy_image, enemy_image_rect)
+        else:
+            # Fallback to red rectangle if no image
+            pygame.draw.rect(
+                self.game.screen, (255, 50, 50), enemy_frame_rect.inflate(-20, -20)
+            )
 
+        # Enemy HP bar and stats
         enemy_hp_percent = max(0, self.enemy.hp / 100)
         enemy_hp_width = int(self.enemy_frame_size[0] * enemy_hp_percent)
         enemy_hp_rect = pygame.Rect(

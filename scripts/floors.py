@@ -1,20 +1,20 @@
-from enemy import Enemy
+from enemy import Enemy, Goblin, Orc, Dragon
 
 
 class Floor:
-    def __init__(self, name, enemy_type, story_text, enemy_x=500, enemy_y=400):
+    def __init__(self, name, enemy_type, story_text, enemy_x=500, enemy_y=450):
         self.name = name
         self.enemy_type = enemy_type
         self.story_text = story_text
         self.cleared = False
-        self.player_pos = [100, 400]
-        self.last_position_before_battle = [100, 400]
+        self.player_pos = [100, 450]
+        self.last_position_before_battle = [100, 450]
         self.enemy = Enemy(enemy_x, enemy_y)
         self.defeated_enemies = set()
         self.returning_from_battle = False
         self.in_battle = False
         self.current_turn = "player"
-        self.ground_level = 400
+        self.ground_level = 450
         self.player_velocity_y = 0
         self.player_jumping = False
         self.gravity = 0.5
@@ -76,7 +76,8 @@ class FirstFloor(Floor):
             "Hanya ada satu jalan keluar, yaitu maju ke depan.",
             "Dalam kegelapan, kamu melihat sosok yang mengintai...",
         ]
-        super().__init__("First Floor", "Goblin", story_text, 500, 400)
+        super().__init__("First Floor", "Goblin", story_text, 500, 450)
+        self.enemy = Goblin(500, 590)
 
 
 class SecondFloor(Floor):
@@ -87,7 +88,8 @@ class SecondFloor(Floor):
             "Suara-suara aneh terdengar dari kejauhan.",
             "Sesuatu yang lebih kuat menunggumu di depan.",
         ]
-        super().__init__("Second Floor", "Orc", story_text, 500, 400)
+        super().__init__("Second Floor", "Orc", story_text, 500, 450)
+        self.enemy = Orc(500, 450)
 
 
 class ThirdFloor(Floor):
@@ -98,4 +100,5 @@ class ThirdFloor(Floor):
             "Asap dan aura kematian menyelimuti sekitarmu.",
             "Dari kejauhan, kamu melihat siluet naga yang sedang tertidur...",
         ]
-        super().__init__("Third Floor", "Dragon", story_text, 500, 400)
+        super().__init__("Third Floor", "Dragon", story_text, 500, 450)
+        self.enemy = Dragon(500, 450)
