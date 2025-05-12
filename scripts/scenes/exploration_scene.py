@@ -266,7 +266,7 @@ class ExplorationScene(BaseScene):
             self.return_to_menu()
 
     def start_battle(self, enemy, player_first):
-        from scenes.battle_scene import BattleScene
+        from scenes.battle_scene.battle_scene import BattleScene
 
         self.current_floor.save_battle_position(self.current_floor.player_pos)
         self.current_floor.in_battle = True

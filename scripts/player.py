@@ -120,7 +120,7 @@ class Player:
             )
             self.current_ultimate = FireUltimate(
                 damage=30,
-                cooldown=5.0,
+                cooldown=20.0,
             )
         elif floor_index == 1:
             self.current_skill = Skill(
