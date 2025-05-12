@@ -22,15 +22,11 @@ class Attack:
             return None
 
         x, y = self.player.current_floor.player_pos
-        direction = self.player.facing
+        direction = self.player.game.player.facing
 
         if direction == "right":
             return pygame.Rect(x + 40, y, self.range, 40)
         elif direction == "left":
             return pygame.Rect(x - self.range, y, self.range, 40)
-        elif direction == "up":
-            return pygame.Rect(x, y - self.range, 40, self.range)
-        elif direction == "down":
-            return pygame.Rect(x, y + 40, 40, self.range)
 
         return None

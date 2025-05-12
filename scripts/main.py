@@ -4,7 +4,9 @@ from scenes.mainmenu_scene import MainMenuScene
 
 def main():
     game = Game()
-    game.scene_manager.go_to(MainMenuScene(game))
+
+    main_menu = MainMenuScene(game)
+    game.scene_manager.go_to(main_menu)
     game.run()
 
 
