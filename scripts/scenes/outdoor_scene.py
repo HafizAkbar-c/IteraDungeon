@@ -92,21 +92,24 @@ class OutdoorScene(BaseScene):
     def render(self):
         self.game.screen.blit(self.background, (0, 0))
 
-        if self.facing == "left":
-            self.game.screen.blit(
-                self.game.player.left_image,
-                (self.player_pos[0], self.player_pos[1] - 60),
-            )
-        elif self.facing == "right":
-            self.game.screen.blit(
-                self.game.player.right_image,
-                (self.player_pos[0], self.player_pos[1] - 60),
-            )
+        # Determine if the player is moving
+        keys = pygame.key.get_pressed()
+        moving = keys[pygame.K_LEFT] or keys[pygame.K_a] or keys[pygame.K_RIGHT] or keys[pygame.K_d]
+
+        if self.facing == "right":
+            if moving:
+                image = self.game.player.get_walk_frame()
+            else:
+                image = self.game.player.walk_right_images[0]  # idle right
+        elif self.facing == "left":
+            if moving:
+                image = pygame.transform.flip(self.game.player.get_walk_frame(), True, False)
+            else:
+                image = pygame.transform.flip(self.game.player.walk_right_images[0], True, False)  # idle left
         else:
-            self.game.screen.blit(
-                self.game.player.front_image,
-                (self.player_pos[0], self.player_pos[1] - 60),
-            )
+            image = self.game.player.front_image
+
+        self.game.screen.blit(image, (self.player_pos[0], self.player_pos[1] - 60))
 
         # Render player name
         name_text = self.font.render(self.game.player.name, True, (255, 255, 255))

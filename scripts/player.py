@@ -25,6 +25,12 @@ class Player:
         self.current_ultimate = None
         self.skill_cooldown = 0
         self.ultimate_cooldown = 0
+        self.attack_frame = 0
+        self.attack_counter = 0
+        self.attack_frame_delay = 6
+        self.walk_frame = 0
+        self.walk_counter = 0
+        self.walk_frame_delay = 6
 
         self.player_size = (200, 200)
         self._player_front = None
@@ -33,29 +39,45 @@ class Player:
         self._player_attack = None
         self._load_images()
 
+    def get_walk_frame(self):
+        self.walk_counter += 1
+        if self.walk_counter >= self.walk_frame_delay:
+            self.walk_counter = 0
+            self.walk_frame = (self.walk_frame + 1) % len(self.walk_right_images)
+        return self.walk_right_images[self.walk_frame]
+    
+    def get_attack_frame(self):
+        self.attack_counter += 1
+        if self.attack_counter >= self.attack_frame_delay:
+            self.attack_counter = 0
+            self.attack_frame += 1
+            if self.attack_frame >= len(self.attack_images):
+                self.attack_frame = 0
+                self.attack_active = False  # animation done
+        return self.attack_images[self.attack_frame]
+
+
     def _load_images(self):
         self._player_front = pygame.image.load(
             "scripts/assets/Main Character/front_facing.png"
         )
-        self._player_right = pygame.image.load(
-            "scripts/assets/Main Character/jalan00000.png"
-        )
-        self._player_left = pygame.image.load(
-            "scripts/assets/Main Character/left_facing.png"
-        )
-        self._player_attack = pygame.image.load(
-            "scripts/assets/Main Character/Action_00004.png"
-        )
+        self.walk_right_images = []
+        for i in range(3):
+            img = pygame.image.load(f"scripts/assets/Main Character/jalan0000{i}.png")
+            img = pygame.transform.scale(img, self.player_size)
+            self.walk_right_images.append(img)
+
+        self.walk_left_images = [pygame.transform.flip(img, True, False) for img in self.walk_right_images]
+
+        self.attack_images = []
+        for i in range(3):  # change number to match your frames
+            img = pygame.image.load(f"scripts/assets/Main Character/Action_0000{i}.png")
+            img = pygame.transform.scale(img, self.player_size)
+            self.attack_images.append(img)
+
 
         self._player_front = pygame.transform.scale(
             self._player_front, self.player_size
-        )
-        self._player_right = pygame.transform.scale(
-            self._player_right, self.player_size
-        )
-        self._player_left = pygame.transform.scale(self._player_left, self.player_size)
-        self._player_attack = pygame.transform.scale(
-            self._player_attack, self.player_size
         )
 
     @property

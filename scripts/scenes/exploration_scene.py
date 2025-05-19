@@ -193,27 +193,17 @@ class ExplorationScene(BaseScene):
 
         player_x = self.current_floor.player_pos[0]
         player_y = self.current_floor.player_pos[1] - 60
-
+        
         if self.is_attacking:
-            self.game.screen.blit(
-                self.game.player.attack_image,
-                (player_x, player_y),
-            )
-        elif self.facing == "left":
-            self.game.screen.blit(
-                self.game.player.left_image,
-                (player_x, player_y),
-            )
+            image = self.game.player.get_attack_frame()
         elif self.facing == "right":
-            self.game.screen.blit(
-                self.game.player.right_image,
-                (player_x, player_y),
-            )
+            image = self.game.player.get_walk_frame()
+        elif self.facing == "left":
+            image = pygame.transform.flip(self.game.player.get_walk_frame(), True, False)
         else:
-            self.game.screen.blit(
-                self.game.player.front_image,
-                (player_x, player_y),
-            )
+            image = self.game.player.front_image
+
+        self.game.screen.blit(image, (self.current_floor.player_pos[0], self.current_floor.player_pos[1] - 60))
 
         name_text = self.font.render(self.game.player.name, True, (255, 255, 255))
         name_rect = name_text.get_rect(
