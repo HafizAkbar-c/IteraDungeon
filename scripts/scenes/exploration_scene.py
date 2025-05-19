@@ -193,9 +193,12 @@ class ExplorationScene(BaseScene):
 
         player_x = self.current_floor.player_pos[0]
         player_y = self.current_floor.player_pos[1] - 60
-        
+
         if self.is_attacking:
-            image = self.game.player.get_attack_frame()
+            if self.facing == "left":
+                image = pygame.transform.flip(self.game.player.get_attack_frame(), True, False)
+            else:
+                image = self.game.player.get_attack_frame()
         elif self.facing == "right":
             image = self.game.player.get_walk_frame()
         elif self.facing == "left":
