@@ -101,4 +101,4 @@ class ThirdFloor(Floor):
             "Dari kejauhan, kamu melihat siluet naga yang sedang tertidur...",
         ]
         super().__init__("Third Floor", "Dragon", story_text, 500, 450)
-        self.enemy = Dragon(500, 590)
+        self.enemy = Dragon(400, 600)
