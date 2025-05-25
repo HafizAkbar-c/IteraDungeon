@@ -95,14 +95,14 @@ class IceUltimate(Ultimate):
 
     def _load_frames(self):
         self.frames = []
-        base_path = "scripts/assets/Main Character/Ulti"
+        base_path = "scripts/assets/Main Character/Ulti 2"
         frames_files = [
-            "ulti-frame-1.jpg",
-            "ulti-frame-2.jpg",
-            "ulti-frame-3.jpg",
-            "ulti-frame-4.jpg",
-            "ulti-frame-5.jpg",
-            "ulti-frame-6.jpg",
+            "Ulti 2_00000.png",
+            "Ulti 2_00007.png",
+            "Ulti 2_00014.png",
+            "Ulti 2_00021.png",
+            "Ulti 2_00028.png",
+            "Ulti 2_00034.png",
         ]
         for frame_file in frames_files:
             frame_path = os.path.join(base_path, frame_file)
