@@ -159,7 +159,7 @@ class BattleScene(BaseScene):
 
             elif self.enemy.enemy_type == "Dragon":
                 self.enemy_image = pygame.image.load(
-                    "scripts/assets/Background/Floor 3/border boss_00000.png"
+                    "scripts/assets/Background/Floor 3/border boss_00001.png"
                 )
                 self.enemy_image = pygame.transform.scale(self.enemy_image, (150, 150))
 
