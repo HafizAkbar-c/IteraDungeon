@@ -51,6 +51,11 @@ class MainMenuScene(BaseScene):
             self.main_menu_music.stop()  # Stop main menu music
             self.game.running = False
 
+    def on_exit(self):
+        # Stop main menu music when exiting the scene
+        self.main_menu_music.stop()
+        super().on_exit()
+
     def render(self):
         self.game.screen.blit(self.background, (0, 0))
 

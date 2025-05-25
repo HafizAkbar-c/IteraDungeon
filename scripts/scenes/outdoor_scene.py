@@ -31,7 +31,7 @@ class OutdoorScene(BaseScene):
         # Load and play outdoor background music
         self.outdoor_music = pygame.mixer.Sound("scripts/assets/audio/exploration.mp3")
         self.outdoor_music.set_volume(0.4)  # Set volume to 40%
-        self.outdoor_music.play(-1)  # Loop indefinitely during outdoor scene
+        self.outdoor_music.play(-1)  # Loop indefinitely
 
     def handle_events(self):
         for event in pygame.event.get():
@@ -146,3 +146,8 @@ class OutdoorScene(BaseScene):
                 center=(self.game.screen.get_width() // 2, 100)
             )
             self.game.screen.blit(hint_text, text_rect)
+
+    def on_exit(self):
+        # Stop outdoor music when exiting the scene
+        self.outdoor_music.stop()
+        super().on_exit()

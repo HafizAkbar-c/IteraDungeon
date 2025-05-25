@@ -287,6 +287,9 @@ class ExplorationScene(BaseScene):
     def start_battle(self, enemy):
         from scenes.battle_scene.battle_scene import BattleScene
 
+        # Stop exploration music before starting the battle
+        self.exploration_music.stop()
+
         self.current_floor.save_battle_position(self.current_floor.player_pos)
         self.current_floor.in_battle = True
         self.game.scene_manager.go_to(BattleScene(self.game, enemy, self))
@@ -343,3 +346,8 @@ class ExplorationScene(BaseScene):
         )
 
         self.game.scene_manager.go_to(ending_scene)
+
+    def on_exit(self):
+        # Stop exploration music when exiting the scene
+        self.exploration_music.stop()
+        super().on_exit()
