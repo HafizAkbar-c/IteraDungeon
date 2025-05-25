@@ -20,6 +20,8 @@ class Game:
         while self.running:
             self.scene_manager.handle_events()
             self.scene_manager.update()
+            if not self.running:
+                break
             self.scene_manager.render()
             pygame.display.flip()
             self.clock.tick(FPS)

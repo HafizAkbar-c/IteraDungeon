@@ -135,20 +135,14 @@ class LightningUltimate(Ultimate):
         )
 
     def _load_frames(self):
-        self.frames = []
-        base_path = "scripts/assets/Main Character/Ulti"
-        frames_files = [
-            "ulti-frame-1.jpg",
-            "ulti-frame-2.jpg",
-            "ulti-frame-3.jpg",
-            "ulti-frame-4.jpg",
-            "ulti-frame-5.jpg",
-            "ulti-frame-6.jpg",
+        self.frames = [
+            "scripts/assets/Main Character/Ulti 3/ulti 3 perframe_00000.png",
+            "scripts/assets/Main Character/Ulti 3/ulti 3 perframe_00006.png",
+            "scripts/assets/Main Character/Ulti 3/ulti 3 perframe_00012.png",
+            "scripts/assets/Main Character/Ulti 3/ulti 3 perframe_00018.png",
+            "scripts/assets/Main Character/Ulti 3/ulti 3 perframe_00024.png",
+            "scripts/assets/Main Character/Ulti 3/ulti 3 perframe_00032.png",
         ]
-        for frame_file in frames_files:
-            frame_path = os.path.join(base_path, frame_file)
-            if os.path.exists(frame_path):
-                self.frames.append(frame_path)
 
 
 class SkillTree:

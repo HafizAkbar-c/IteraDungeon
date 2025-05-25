@@ -43,9 +43,24 @@ class BattleScene(BaseScene):
         )
         self.player_image = pygame.transform.scale(self.player_image, (150, 150))
 
-        self.background_image = pygame.image.load(
-            "scripts/assets/Background/Floor 1 battle/Comp 1_00000.png"
-        )
+        if self.current_floor_index == 0:
+            self.background_image = pygame.image.load(
+                "scripts/assets/Background/Floor 1 battle/Comp 1_00000.png"
+            )
+        elif self.current_floor_index == 1:
+            self.background_image = pygame.image.load(
+                "scripts/assets/Background/Floor 2/in battle.png"
+            )
+        elif self.current_floor_index == 2:
+            self.background_image = pygame.image.load(
+                "scripts/assets/Background/Floor 3/Explore bg.png"
+            )
+        else:
+            self.background_image = pygame.Surface(
+                (self.game.screen.get_width(), self.game.screen.get_height())
+            )
+            self.background_image.fill((30, 30, 40))
+
         self.background_image = pygame.transform.scale(
             self.background_image,
             (self.game.screen.get_width(), self.game.screen.get_height()),
@@ -138,6 +153,27 @@ class BattleScene(BaseScene):
                 orc_frame2 = pygame.transform.scale(orc_frame2, (500, 500))
 
                 self.center_enemy_frames = [orc_frame1, orc_frame2]
+                self.current_enemy_frame = 0
+                self.enemy_frame_timer = 0
+                self.enemy_frame_interval = 1000
+
+            elif self.enemy.enemy_type == "Dragon":
+                self.enemy_image = pygame.image.load(
+                    "scripts/assets/Background/Floor 3/border boss_00000.png"
+                )
+                self.enemy_image = pygame.transform.scale(self.enemy_image, (150, 150))
+
+                naga_frames = [
+                    pygame.image.load(
+                        f"scripts/assets/Background/Floor 3/Naga per-frame_0000{i}.png"
+                    )
+                    for i in range(5)
+                ]
+                naga_frames = [
+                    pygame.transform.scale(frame, (500, 500)) for frame in naga_frames
+                ]
+
+                self.center_enemy_frames = naga_frames
                 self.current_enemy_frame = 0
                 self.enemy_frame_timer = 0
                 self.enemy_frame_interval = 1000

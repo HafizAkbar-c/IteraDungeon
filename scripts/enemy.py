@@ -55,5 +55,9 @@ class Orc(Enemy):
 
 class Dragon(Enemy):
     def __init__(self, x, y):
-        super().__init__(x, y, size=80, name="Dragon", atk=12)
+        super().__init__(x, y, size=200, name="Dragon", atk=12)
         self.enemy_type = "Dragon"
+        self.image = pygame.image.load(
+            "scripts/assets/Background/Floor 3/Naga per-frame_00000.png"
+        )
+        self.image = pygame.transform.scale(self.image, (self.size, self.size))

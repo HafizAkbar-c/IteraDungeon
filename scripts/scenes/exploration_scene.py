@@ -46,6 +46,13 @@ class ExplorationScene(BaseScene):
             self.second_floor_background,
             (self.game.screen.get_width(), self.game.screen.get_height()),
         )
+        self.third_floor_background = pygame.image.load(
+            "scripts/assets/Background/Floor 3/Explore bg.png"
+        )
+        self.third_floor_background = pygame.transform.scale(
+            self.third_floor_background,
+            (self.game.screen.get_width(), self.game.screen.get_height()),
+        )
         self.generic_background = pygame.Surface(
             (self.game.screen.get_width(), self.game.screen.get_height())
         )
@@ -165,6 +172,8 @@ class ExplorationScene(BaseScene):
             self.game.screen.blit(self.first_floor_background, (0, 0))
         elif self.current_floor_index == 1:
             self.game.screen.blit(self.second_floor_background, (0, 0))
+        elif self.current_floor_index == 2:
+            self.game.screen.blit(self.third_floor_background, (0, 0))
         else:
             self.game.screen.blit(self.generic_background, (0, 0))
 
