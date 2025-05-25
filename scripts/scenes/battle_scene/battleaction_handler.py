@@ -14,7 +14,7 @@ class BattleActionHandler:
 
     def use_attack(self):
         if self.punch_sound:
-            self.punch_sound.play()
+            self.punch_sound.play()  # This is a short sound effect, no need to stop other sounds
 
         damage = self.player.attack()
         self.enemy.hp -= damage

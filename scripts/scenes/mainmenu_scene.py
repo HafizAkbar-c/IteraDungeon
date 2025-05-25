@@ -1,16 +1,16 @@
 import pygame
 from scenes.base_scene import BaseScene
-from scenes.options_scene import OptionsScene
-from scenes.outdoor_scene import OutdoorScene
-
 from utils.font_helper import FontHelper
 
 
 class MainMenuScene(BaseScene):
     def __init__(self, game):
         super().__init__(game)
+        # Stop any currently playing sound
+        pygame.mixer.stop()
+
         self.font = FontHelper.getFont("Minecraft", 48)
-        self.options = ["Start", "Rename", "Exit"]
+        self.options = ["Start", "Exit"]  # Removed "Rename" option
         self.selected = 0
 
         # Load and play main menu background music
@@ -36,25 +36,12 @@ class MainMenuScene(BaseScene):
                 elif event.key == pygame.K_DOWN:
                     self.selected = (self.selected + 1) % len(self.options)
                 elif event.key == pygame.K_RETURN:
-                    self.select_option()
+                    if self.options[self.selected] == "Start":
+                        from scenes.outdoor_scene import OutdoorScene
 
-    def select_option(self):
-        selected_option = self.options[self.selected]
-        if selected_option == "Start":
-            self.main_menu_music.stop()  # Stop main menu music
-            outdoor_scene = OutdoorScene(self.game)
-            self.game.scene_manager.go_to(outdoor_scene)
-        elif selected_option == "Rename":
-            self.main_menu_music.stop()  # Stop main menu music
-            self.game.scene_manager.go_to(OptionsScene(self.game))
-        elif selected_option == "Exit":
-            self.main_menu_music.stop()  # Stop main menu music
-            self.game.running = False
-
-    def on_exit(self):
-        # Stop main menu music when exiting the scene
-        self.main_menu_music.stop()
-        super().on_exit()
+                        self.game.scene_manager.go_to(OutdoorScene(self.game))
+                    elif self.options[self.selected] == "Exit":
+                        self.game.running = False
 
     def render(self):
         self.game.screen.blit(self.background, (0, 0))

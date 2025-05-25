@@ -8,10 +8,20 @@ from scenes.story_transition_scene import StoryTransitionScene
 class ExplorationScene(BaseScene):
     def __init__(self, game):
         super().__init__(game)
+        # Stop any currently playing sound
+        pygame.mixer.stop()
+
+        # Load and play exploration background music
+        self.exploration_music = pygame.mixer.Sound(
+            "scripts/assets/audio/exploration.mp3"
+        )
+        self.exploration_music.set_volume(0.4)  # Set volume to 40%
+        self.exploration_music.play(-1)  # Loop indefinitely during exploration
+
         self.player_speed = 5
         self.font = pygame.font.SysFont(None, 24)
         self.menu_active = False
-        self.menu_options = ["Profile", "Skill Tree", "Options", "Exit to Main Menu"]
+        self.menu_options = ["Skill Tree", "Options", "Exit to Main Menu"]
         self.menu_selected = 0
         self.facing = "front"
         self.sword = Attack(self)
@@ -20,13 +30,6 @@ class ExplorationScene(BaseScene):
         self.footstep_sound = pygame.mixer.Sound("scripts/assets/audio/Footstep.wav")
         self.footstep_cooldown = 0
         self.footstep_delay = 20
-
-        # Load and play exploration background music
-        self.exploration_music = pygame.mixer.Sound(
-            "scripts/assets/audio/exploration.mp3"
-        )
-        self.exploration_music.set_volume(0.4)  # Set volume to 40%
-        self.exploration_music.play(-1)  # Loop indefinitely during exploration
 
         self.floors = [FirstFloor(), SecondFloor(), ThirdFloor()]
         self.current_floor_index = 0
@@ -60,39 +63,18 @@ class ExplorationScene(BaseScene):
             if event.type == pygame.QUIT:
                 self.game.running = False
             elif event.type == pygame.KEYDOWN:
-                if self.menu_active:
-                    if event.key == pygame.K_UP:
-                        self.menu_selected = (self.menu_selected - 1) % len(
-                            self.menu_options
-                        )
-                    elif event.key == pygame.K_DOWN:
-                        self.menu_selected = (self.menu_selected + 1) % len(
-                            self.menu_options
-                        )
-                    elif event.key == pygame.K_RETURN:
-                        self.select_menu_option()
-                    elif event.key == pygame.K_ESCAPE:
-                        self.menu_active = False
-                else:
-                    if event.key == pygame.K_ESCAPE:
-                        self.menu_active = True
-                    elif event.key == pygame.K_z:
-                        from scenes.skilltree_scene import SkillTreeScene
-
-                        self.game.scene_manager.push(SkillTreeScene(self.game))
-                    elif event.key == pygame.K_x:
-                        if (
-                            not self.current_floor.cleared
-                            and self.check_enemy_collision()
-                        ):
-                            self.is_attacking = True
-                            self.attack_timer = 30
-                            self.start_battle(self.current_floor.enemy)
-                        else:
-                            self.is_attacking = True
-                            self.attack_timer = 30
-                    elif event.key == pygame.K_UP:
-                        self.current_floor.jump()
+                if event.key == pygame.K_ESCAPE:
+                    self.game.running = False
+                elif event.key == pygame.K_x:
+                    if not self.current_floor.cleared and self.check_enemy_collision():
+                        self.is_attacking = True
+                        self.attack_timer = 30
+                        self.start_battle(self.current_floor.enemy)
+                    else:
+                        self.is_attacking = True
+                        self.attack_timer = 30
+                elif event.key == pygame.K_UP:
+                    self.current_floor.jump()
 
     def update(self):
         keys = pygame.key.get_pressed()
@@ -197,9 +179,6 @@ class ExplorationScene(BaseScene):
             )
             self.game.screen.blit(next_text, (self.game.screen.get_width() - 300, 10))
 
-        player_x = self.current_floor.player_pos[0]
-        player_y = self.current_floor.player_pos[1] - 60
-
         if self.is_attacking:
             if self.facing == "left":
                 image = pygame.transform.flip(
@@ -221,68 +200,8 @@ class ExplorationScene(BaseScene):
             (self.current_floor.player_pos[0], self.current_floor.player_pos[1] - 60),
         )
 
-        name_text = self.font.render(self.game.player.name, True, (255, 255, 255))
-        name_rect = name_text.get_rect(
-            center=(player_x + self.game.player.player_size[0] // 2, player_y - 20)
-        )
-        self.game.screen.blit(name_text, name_rect)
-
-        if self.menu_active:
-            overlay = pygame.Surface((300, 300))
-            overlay.set_alpha(200)
-            overlay.fill((50, 50, 50))
-            self.game.screen.blit(overlay, (250, 150))
-            for idx, item in enumerate(self.menu_options):
-                color = (255, 255, 0) if idx == self.menu_selected else (255, 255, 255)
-                text = self.font.render(item, True, color)
-                self.game.screen.blit(text, (270, 170 + idx * 30))
-
         if self.current_floor.enemy not in self.current_floor.defeated_enemies:
             self.current_floor.enemy.draw(self.game.screen)
-
-    def handle_menu_selection(self):
-        selected = self.menu_options[self.menu_selected]
-        if selected == "Profile":
-            from scenes.profile_scene import ProfileScene
-
-            self.game.scene_manager.go_to(ProfileScene(self.game))
-        elif selected == "Skill Tree":
-            print("Open Skill Tree (Belum dibuat)")
-        elif selected == "Options":
-            print("Open Options (Belum dibuat)")
-        elif selected == "Main Menu":
-            from scenes.mainmenu_scene import MainMenuScene
-
-            self.game.scene_manager.go_to(MainMenuScene(self.game))
-        elif selected == "Exit Game":
-            self.game.running = False
-
-    def draw_menu(self):
-        menu_surface = pygame.Surface((300, 200))
-        menu_surface.fill((50, 50, 50))
-        for idx, option in enumerate(self.menu_options):
-            color = (255, 255, 0) if idx == self.menu_selected else (255, 255, 255)
-            text = self.font.render(option, True, color)
-            menu_surface.blit(text, (20, 20 + idx * 40))
-        self.game.screen.blit(
-            menu_surface, (self.game.screen.get_width() // 2 - 150, 100)
-        )
-
-    def select_menu_option(self):
-        option = self.menu_options[self.menu_selected]
-        print(f"Selected: {option}")
-        if option == "Profile":
-            from scenes.profile_scene import ProfileScene
-
-            self.game.scene_manager.push(ProfileScene(self.game))
-        elif option == "Skill Tree":
-            from scenes.skilltree_scene import SkillTreeScene
-
-            self.game.scene_manager.go_to(SkillTreeScene(self.game))
-        elif option == "Options":
-            print("Buka options (belum dibuat)")
-        elif option == "Exit to Main Menu":
-            self.return_to_menu()
 
     def start_battle(self, enemy):
         from scenes.battle_scene.battle_scene import BattleScene
@@ -305,7 +224,7 @@ class ExplorationScene(BaseScene):
     def show_ending(self):
         ending_story = [
             "Naga yang mengerikan itu akhirnya jatuh ke tanah dengan dentuman keras.",
-            "Kamu berdiri terengah-engah, nyaris tidak percaya bahwa kamu berhasil mengalahkannya.",
+            "Kamu berdiri terengah-pernah, nyaris tidak percaya bahwa kamu berhasil mengalahkannya.",
             "",
             "Tiba-tiba, dinding dungeon mulai bergetar dan retakan mulai muncul di dinding-dinding tua.",
             "Cahaya keemasan menembus dari celah-celah retakan di langit-langit.",
@@ -346,8 +265,3 @@ class ExplorationScene(BaseScene):
         )
 
         self.game.scene_manager.go_to(ending_scene)
-
-    def on_exit(self):
-        # Stop exploration music when exiting the scene
-        self.exploration_music.stop()
-        super().on_exit()

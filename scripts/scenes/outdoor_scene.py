@@ -8,6 +8,9 @@ from utils.font_helper import FontHelper
 class OutdoorScene(BaseScene):
     def __init__(self, game):
         super().__init__(game)
+        # Stop any currently playing sound
+        pygame.mixer.stop()
+
         self.font = FontHelper.getFont("Minecraft", 24)
         self.player_pos = [100, 450]
         self.player_speed = 5
@@ -128,16 +131,6 @@ class OutdoorScene(BaseScene):
 
         self.game.screen.blit(image, (self.player_pos[0], self.player_pos[1] - 60))
 
-        # Render player name
-        name_text = self.font.render(self.game.player.name, True, (255, 255, 255))
-        name_rect = name_text.get_rect(
-            center=(
-                self.player_pos[0] + self.game.player.player_size[0] // 2,
-                self.player_pos[1] - 80,
-            )
-        )
-        self.game.screen.blit(name_text, name_rect)
-
         if self.entrance_message_visible:
             hint_text = self.font.render(
                 "Tekan ENTER untuk masuk ke dungeon", True, (255, 255, 255)
@@ -146,8 +139,3 @@ class OutdoorScene(BaseScene):
                 center=(self.game.screen.get_width() // 2, 100)
             )
             self.game.screen.blit(hint_text, text_rect)
-
-    def on_exit(self):
-        # Stop outdoor music when exiting the scene
-        self.outdoor_music.stop()
-        super().on_exit()

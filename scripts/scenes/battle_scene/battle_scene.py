@@ -9,6 +9,9 @@ from scenes.battle_scene.uirenderer import UIRenderer
 class BattleScene(BaseScene):
     def __init__(self, game, enemy, exploration_scene=None):
         super().__init__(game)
+        # Stop any currently playing sound
+        pygame.mixer.stop()
+
         self.enemy = enemy
         self.exploration_scene = exploration_scene
         self.current_floor_index = (
@@ -244,17 +247,3 @@ class BattleScene(BaseScene):
 
         self.logger.render(self.game.screen)
         self.ui_renderer.render_buttons(self.game.screen, self.game.player)
-
-    def stop_battle_sounds(self):
-        # Stop any battle-specific sounds
-        if hasattr(self, "goblin_sound"):
-            self.goblin_sound.stop()
-        if hasattr(self, "orc_sound"):
-            self.orc_sound.stop()
-        if hasattr(self, "dragon_sound"):
-            self.dragon_sound.stop()
-
-    def on_exit(self):
-        # Ensure sounds are stopped when exiting the battle scene
-        self.stop_battle_sounds()
-        super().on_exit()
