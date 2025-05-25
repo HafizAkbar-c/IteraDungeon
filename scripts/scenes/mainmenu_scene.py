@@ -13,6 +13,11 @@ class MainMenuScene(BaseScene):
         self.options = ["Start", "Rename", "Exit"]
         self.selected = 0
 
+        # Load and play main menu background music
+        self.main_menu_music = pygame.mixer.Sound("scripts/assets/audio/main menu.mp3")
+        self.main_menu_music.set_volume(0.5)  # Set volume to 50%
+        self.main_menu_music.play(-1)  # Loop indefinitely
+
         self.background = pygame.image.load(
             "scripts/assets/Background/main_menu_scene.png"
         )
@@ -36,12 +41,20 @@ class MainMenuScene(BaseScene):
     def select_option(self):
         selected_option = self.options[self.selected]
         if selected_option == "Start":
+            self.main_menu_music.stop()  # Stop main menu music
             outdoor_scene = OutdoorScene(self.game)
             self.game.scene_manager.go_to(outdoor_scene)
         elif selected_option == "Rename":
+            self.main_menu_music.stop()  # Stop main menu music
             self.game.scene_manager.go_to(OptionsScene(self.game))
         elif selected_option == "Exit":
+            self.main_menu_music.stop()  # Stop main menu music
             self.game.running = False
+
+    def on_exit(self):
+        # Stop main menu music when exiting the scene
+        self.main_menu_music.stop()
+        super().on_exit()
 
     def render(self):
         self.game.screen.blit(self.background, (0, 0))

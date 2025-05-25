@@ -17,10 +17,16 @@ class ExplorationScene(BaseScene):
         self.sword = Attack(self)
         self.is_attacking = False
         self.attack_timer = 0
-
         self.footstep_sound = pygame.mixer.Sound("scripts/assets/audio/Footstep.wav")
         self.footstep_cooldown = 0
         self.footstep_delay = 20
+
+        # Load and play exploration background music
+        self.exploration_music = pygame.mixer.Sound(
+            "scripts/assets/audio/exploration.mp3"
+        )
+        self.exploration_music.set_volume(0.4)  # Set volume to 40%
+        self.exploration_music.play(-1)  # Loop indefinitely during exploration
 
         self.floors = [FirstFloor(), SecondFloor(), ThirdFloor()]
         self.current_floor_index = 0
@@ -196,17 +202,24 @@ class ExplorationScene(BaseScene):
 
         if self.is_attacking:
             if self.facing == "left":
-                image = pygame.transform.flip(self.game.player.get_attack_frame(), True, False)
+                image = pygame.transform.flip(
+                    self.game.player.get_attack_frame(), True, False
+                )
             else:
                 image = self.game.player.get_attack_frame()
         elif self.facing == "right":
             image = self.game.player.get_walk_frame()
         elif self.facing == "left":
-            image = pygame.transform.flip(self.game.player.get_walk_frame(), True, False)
+            image = pygame.transform.flip(
+                self.game.player.get_walk_frame(), True, False
+            )
         else:
             image = self.game.player.front_image
 
-        self.game.screen.blit(image, (self.current_floor.player_pos[0], self.current_floor.player_pos[1] - 60))
+        self.game.screen.blit(
+            image,
+            (self.current_floor.player_pos[0], self.current_floor.player_pos[1] - 60),
+        )
 
         name_text = self.font.render(self.game.player.name, True, (255, 255, 255))
         name_rect = name_text.get_rect(
@@ -274,6 +287,9 @@ class ExplorationScene(BaseScene):
     def start_battle(self, enemy):
         from scenes.battle_scene.battle_scene import BattleScene
 
+        # Stop exploration music before starting the battle
+        self.exploration_music.stop()
+
         self.current_floor.save_battle_position(self.current_floor.player_pos)
         self.current_floor.in_battle = True
         self.game.scene_manager.go_to(BattleScene(self.game, enemy, self))
@@ -330,3 +346,8 @@ class ExplorationScene(BaseScene):
         )
 
         self.game.scene_manager.go_to(ending_scene)
+
+    def on_exit(self):
+        # Stop exploration music when exiting the scene
+        self.exploration_music.stop()
+        super().on_exit()

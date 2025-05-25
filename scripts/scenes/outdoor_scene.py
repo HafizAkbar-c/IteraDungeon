@@ -28,6 +28,11 @@ class OutdoorScene(BaseScene):
             (self.game.screen.get_width(), self.game.screen.get_height()),
         )
 
+        # Load and play outdoor background music
+        self.outdoor_music = pygame.mixer.Sound("scripts/assets/audio/exploration.mp3")
+        self.outdoor_music.set_volume(0.4)  # Set volume to 40%
+        self.outdoor_music.play(-1)  # Loop indefinitely
+
     def handle_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -76,6 +81,9 @@ class OutdoorScene(BaseScene):
             self.enter_dungeon()
 
     def enter_dungeon(self):
+        # Stop outdoor music when entering the dungeon
+        self.outdoor_music.stop()
+
         intro_story = [
             "Kamu telah menemukan pintu masuk menuju ke bawah tanah yang misterius...",
             "Dengan rasa penasaran, kamu melangkah masuk ke dalam kegelapan.",
@@ -94,7 +102,12 @@ class OutdoorScene(BaseScene):
 
         # Determine if the player is moving
         keys = pygame.key.get_pressed()
-        moving = keys[pygame.K_LEFT] or keys[pygame.K_a] or keys[pygame.K_RIGHT] or keys[pygame.K_d]
+        moving = (
+            keys[pygame.K_LEFT]
+            or keys[pygame.K_a]
+            or keys[pygame.K_RIGHT]
+            or keys[pygame.K_d]
+        )
 
         if self.facing == "right":
             if moving:
@@ -103,9 +116,13 @@ class OutdoorScene(BaseScene):
                 image = self.game.player.walk_right_images[0]  # idle right
         elif self.facing == "left":
             if moving:
-                image = pygame.transform.flip(self.game.player.get_walk_frame(), True, False)
+                image = pygame.transform.flip(
+                    self.game.player.get_walk_frame(), True, False
+                )
             else:
-                image = pygame.transform.flip(self.game.player.walk_right_images[0], True, False)  # idle left
+                image = pygame.transform.flip(
+                    self.game.player.walk_right_images[0], True, False
+                )  # idle left
         else:
             image = self.game.player.front_image
 
@@ -129,3 +146,8 @@ class OutdoorScene(BaseScene):
                 center=(self.game.screen.get_width() // 2, 100)
             )
             self.game.screen.blit(hint_text, text_rect)
+
+    def on_exit(self):
+        # Stop outdoor music when exiting the scene
+        self.outdoor_music.stop()
+        super().on_exit()

@@ -18,29 +18,61 @@ class BattleScene(BaseScene):
 
         self.punch_sound = pygame.mixer.Sound("scripts/assets/audio/Punch.wav")
 
+        # Add sound effects for goblin, orc, and dragon battles
+        if hasattr(self.enemy, "enemy_type"):
+            if self.enemy.enemy_type == "Goblin":
+                self.goblin_sound = pygame.mixer.Sound(
+                    "scripts/assets/audio/goblin.mp3"
+                )
+                self.goblin_sound.set_volume(0.3)
+                self.goblin_sound.play(-1)
+            elif self.enemy.enemy_type == "Orc":
+                self.orc_sound = pygame.mixer.Sound("scripts/assets/audio/orc.mp3")
+                self.orc_sound.set_volume(0.3)
+                self.orc_sound.play(-1)
+            elif self.enemy.enemy_type == "Dragon":
+                self.dragon_sound = pygame.mixer.Sound(
+                    "scripts/assets/audio/dragon.mp3"
+                )
+                self.dragon_sound.set_volume(0.3)
+                self.dragon_sound.play(-1)
+
         self.player_image = pygame.image.load(
             "scripts/assets/Background/Floor 1 battle/border1_00000.png"
         )
         self.player_image = pygame.transform.scale(self.player_image, (150, 150))
 
-        self.background_image = pygame.image.load("scripts/assets/Background/Floor 1 battle/Comp 1_00000.png")
+        self.background_image = pygame.image.load(
+            "scripts/assets/Background/Floor 1 battle/Comp 1_00000.png"
+        )
         self.background_image = pygame.transform.scale(
             self.background_image,
-            (self.game.screen.get_width(), self.game.screen.get_height())
+            (self.game.screen.get_width(), self.game.screen.get_height()),
         )
 
-        self.border_player = pygame.image.load("scripts/assets/Background/Floor 1 battle/border1_00000.png")
+        self.border_player = pygame.image.load(
+            "scripts/assets/Background/Floor 1 battle/border1_00000.png"
+        )
         self.border_player = pygame.transform.scale(self.border_player, (300, 150))
 
-        self.border_enemy = pygame.image.load("scripts/assets/Background/Floor 1 battle/border2_00000.png")
+        self.border_enemy = pygame.image.load(
+            "scripts/assets/Background/Floor 1 battle/border2_00000.png"
+        )
         self.border_enemy = pygame.transform.scale(self.border_enemy, (300, 150))
 
-        self.center_goblin_idle = pygame.image.load("scripts/assets/Background/Floor 1 battle/goblin_00002.png")
-        self.center_goblin_boss = pygame.image.load("scripts/assets/Background/Floor 1 battle/goblin2_00002.png")
+        self.center_goblin_idle = pygame.image.load(
+            "scripts/assets/Background/Floor 1 battle/goblin_00002.png"
+        )
+        self.center_goblin_boss = pygame.image.load(
+            "scripts/assets/Background/Floor 1 battle/goblin2_00002.png"
+        )
 
-        self.center_goblin_idle = pygame.transform.scale(self.center_goblin_idle, (200, 200))
-        self.center_goblin_boss = pygame.transform.scale(self.center_goblin_boss, (200, 200))
-
+        self.center_goblin_idle = pygame.transform.scale(
+            self.center_goblin_idle, (200, 200)
+        )
+        self.center_goblin_boss = pygame.transform.scale(
+            self.center_goblin_boss, (200, 200)
+        )
 
         self.enemy_image = None
         self.center_enemy_image = None
@@ -68,11 +100,17 @@ class BattleScene(BaseScene):
     def _load_enemy_images(self):
         if hasattr(self.enemy, "enemy_type"):
             if self.enemy.enemy_type == "Goblin":
-                self.enemy_image = pygame.image.load("scripts/assets/Background/Floor 1 battle/border2_00000.png")
+                self.enemy_image = pygame.image.load(
+                    "scripts/assets/Background/Floor 1 battle/border2_00000.png"
+                )
                 self.enemy_image = pygame.transform.scale(self.enemy_image, (150, 150))
 
-                goblin_frame1 = pygame.image.load("scripts/assets/Background/Floor 1 battle/goblin_00002.png")
-                goblin_frame2 = pygame.image.load("scripts/assets/Background/Floor 1 battle/goblin2_00002.png")
+                goblin_frame1 = pygame.image.load(
+                    "scripts/assets/Background/Floor 1 battle/goblin_00002.png"
+                )
+                goblin_frame2 = pygame.image.load(
+                    "scripts/assets/Background/Floor 1 battle/goblin2_00002.png"
+                )
 
                 goblin_frame1 = pygame.transform.scale(goblin_frame1, (500, 500))
                 goblin_frame2 = pygame.transform.scale(goblin_frame2, (500, 500))
@@ -149,11 +187,13 @@ class BattleScene(BaseScene):
 
         if self.done:
             return
-        
+
         self.enemy_frame_timer += self.game.clock.get_time()
         if self.enemy_frame_timer >= self.enemy_frame_interval:
             self.enemy_frame_timer = 0
-            self.current_enemy_frame = (self.current_enemy_frame + 1) % len(self.center_enemy_frames)
+            self.current_enemy_frame = (self.current_enemy_frame + 1) % len(
+                self.center_enemy_frames
+            )
 
         self._check_battle_outcome()
 
@@ -195,7 +235,7 @@ class BattleScene(BaseScene):
             current_center_image = self.center_enemy_image
 
         self.ui_renderer.render_enemy(
-        self.game.screen, self.enemy, self.enemy_image, current_center_image
+            self.game.screen, self.enemy, self.enemy_image, current_center_image
         )
 
         self.ui_renderer.render_player(
@@ -204,3 +244,17 @@ class BattleScene(BaseScene):
 
         self.logger.render(self.game.screen)
         self.ui_renderer.render_buttons(self.game.screen, self.game.player)
+
+    def stop_battle_sounds(self):
+        # Stop any battle-specific sounds
+        if hasattr(self, "goblin_sound"):
+            self.goblin_sound.stop()
+        if hasattr(self, "orc_sound"):
+            self.orc_sound.stop()
+        if hasattr(self, "dragon_sound"):
+            self.dragon_sound.stop()
+
+    def on_exit(self):
+        # Ensure sounds are stopped when exiting the battle scene
+        self.stop_battle_sounds()
+        super().on_exit()
