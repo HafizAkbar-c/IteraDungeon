@@ -123,6 +123,27 @@ class BattleScene(BaseScene):
                 self.enemy_frame_timer = 0
                 self.enemy_frame_interval = 1000
 
+            elif self.enemy.enemy_type == "Orc":
+                self.enemy_image = pygame.image.load(
+                    "scripts/assets/Background/Floor 2/ogre border_00000.png"
+                )
+                self.enemy_image = pygame.transform.scale(self.enemy_image, (150, 150))
+
+                orc_frame1 = pygame.image.load(
+                    "scripts/assets/Background/Floor 2/per-frame ogre_00000.png"
+                )
+                orc_frame2 = pygame.image.load(
+                    "scripts/assets/Background/Floor 2/per-frame ogre v2_00000.png"
+                )
+
+                orc_frame1 = pygame.transform.scale(orc_frame1, (500, 500))
+                orc_frame2 = pygame.transform.scale(orc_frame2, (500, 500))
+
+                self.center_enemy_frames = [orc_frame1, orc_frame2]
+                self.current_enemy_frame = 0
+                self.enemy_frame_timer = 0
+                self.enemy_frame_interval = 1000
+
     def handle_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:

@@ -39,12 +39,19 @@ class ExplorationScene(BaseScene):
 
         self.ground_color = (100, 70, 40)
         self.background_color = (135, 206, 235)
-
         self.first_floor_background = pygame.image.load(
             "scripts/assets/Background/first_floor_scene.png"
         )
         self.first_floor_background = pygame.transform.scale(
             self.first_floor_background,
+            (self.game.screen.get_width(), self.game.screen.get_height()),
+        )
+
+        self.second_floor_background = pygame.image.load(
+            "scripts/assets/Background/Floor 2/explore.png"
+        )
+        self.second_floor_background = pygame.transform.scale(
+            self.second_floor_background,
             (self.game.screen.get_width(), self.game.screen.get_height()),
         )
 
@@ -121,6 +128,8 @@ class ExplorationScene(BaseScene):
                 next_floor_index
             ]
             new_exploration_scene.current_floor.player_pos[0] = 100
+            # Update player abilities (skill & ultimate) sesuai floor baru
+            self.game.player.set_floor_abilities(next_floor_index)
 
             story_scene = StoryTransitionScene(
                 self.game,
@@ -156,7 +165,6 @@ class ExplorationScene(BaseScene):
     def check_attack_hits_enemy(self):
         if not self.sword.active:
             return False
-
         hitbox = self.sword.get_hitbox()
         if self.current_floor.enemy not in self.current_floor.defeated_enemies:
             return self.current_floor.enemy.check_hit_by(hitbox)
@@ -165,6 +173,8 @@ class ExplorationScene(BaseScene):
     def render(self):
         if self.current_floor_index == 0:
             self.game.screen.blit(self.first_floor_background, (0, 0))
+        elif self.current_floor_index == 1:
+            self.game.screen.blit(self.second_floor_background, (0, 0))
         else:
             self.game.screen.blit(self.generic_background, (0, 0))
 

@@ -38,10 +38,12 @@ class Goblin(Enemy):
 
 class Orc(Enemy):
     def __init__(self, x, y):
-        super().__init__(x, y, size=70)
+        super().__init__(x, y, size=200)
         self.enemy_type = "Orc"
         self.damage = 8
-        self.image = pygame.image.load("scripts/assets/Boss/orc.png")
+        self.image = pygame.image.load(
+            "scripts/assets/Background/Floor 2/per-frame ogre_00000.png"
+        )
         self.image = pygame.transform.scale(self.image, (self.size, self.size))
 
 

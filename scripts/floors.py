@@ -89,7 +89,7 @@ class SecondFloor(Floor):
             "Sesuatu yang lebih kuat menunggumu di depan.",
         ]
         super().__init__("Second Floor", "Orc", story_text, 500, 450)
-        self.enemy = Orc(500, 450)
+        self.enemy = Orc(500, 590)
 
 
 class ThirdFloor(Floor):
