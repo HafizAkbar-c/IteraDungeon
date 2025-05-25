@@ -9,7 +9,6 @@ from scenes.battle_scene.uirenderer import UIRenderer
 class BattleScene(BaseScene):
     def __init__(self, game, enemy, exploration_scene=None):
         super().__init__(game)
-        # Stop any currently playing sound
         pygame.mixer.stop()
 
         self.enemy = enemy
@@ -21,7 +20,6 @@ class BattleScene(BaseScene):
 
         self.punch_sound = pygame.mixer.Sound("scripts/assets/audio/Punch.wav")
 
-        # Add sound effects for goblin, orc, and dragon battles
         if hasattr(self.enemy, "enemy_type"):
             if self.enemy.enemy_type == "Goblin":
                 self.goblin_sound = pygame.mixer.Sound(
@@ -186,14 +184,12 @@ class BattleScene(BaseScene):
                     self.ui_renderer.skill_button_rect.collidepoint(mouse_pos)
                     and self.game.player.skill_cooldown <= 0
                 ):
-                    # Only allow skill button click if not on cooldown
                     self.ui_renderer.selected_button = 1
                     self.action_handler.use_skill()
                 elif (
                     self.ui_renderer.ultimate_button_rect.collidepoint(mouse_pos)
                     and self.game.player.ultimate_cooldown <= 0
                 ):
-                    # Only allow ultimate button click if not on cooldown
                     self.ui_renderer.selected_button = 2
                     damage, frame_paths = self.action_handler.use_ultimate()
                     if damage > 0 and frame_paths:

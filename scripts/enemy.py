@@ -1,5 +1,5 @@
 import pygame
-from scripts.player import Character
+from player import Character
 
 
 class Enemy(Character):
@@ -12,6 +12,11 @@ class Enemy(Character):
         self.color = (255, 50, 50)
         self.image = None
         self.enemy_type = None
+        self._damage = atk
+
+    @property
+    def damage(self):
+        return self._damage
 
     def attack(self):
         return self._atk

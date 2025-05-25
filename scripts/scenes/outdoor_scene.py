@@ -108,7 +108,7 @@ class OutdoorScene(BaseScene):
             if moving:
                 image = self.game.player.get_walk_frame()
             else:
-                image = self.game.player.walk_right_images[0]  # idle right
+                image = self.game.player.walk_right_images[0]
         elif self.facing == "left":
             if moving:
                 image = pygame.transform.flip(
@@ -117,7 +117,7 @@ class OutdoorScene(BaseScene):
             else:
                 image = pygame.transform.flip(
                     self.game.player.walk_right_images[0], True, False
-                )  # idle left
+                )
         else:
             image = self.game.player.front_image
 

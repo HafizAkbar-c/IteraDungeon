@@ -34,7 +34,7 @@ class MainMenuScene(BaseScene):
                     if self.options[self.selected] == "Start":
                         from scenes.outdoor_scene import OutdoorScene
 
-                        self.game.change_scene(OutdoorScene(self.game))
+                        self.game.scene_manager.go_to(OutdoorScene(self.game))
                     elif self.options[self.selected] == "Exit":
                         self.game.running = False
 

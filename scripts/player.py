@@ -88,7 +88,7 @@ class Player(Character):
             self.attack_frame += 1
             if self.attack_frame >= len(self.attack_images):
                 self.attack_frame = 0
-                self.attack_active = False  # animation done
+                self.attack_active = False
         return self.attack_images[self.attack_frame]
 
     def _load_images(self):
@@ -106,7 +106,7 @@ class Player(Character):
         ]
 
         self.attack_images = []
-        for i in range(3):  # change number to match your frames
+        for i in range(3):
             img = pygame.image.load(f"scripts/assets/Main Character/Action_0000{i}.png")
             img = pygame.transform.scale(img, self.player_size)
             self.attack_images.append(img)
