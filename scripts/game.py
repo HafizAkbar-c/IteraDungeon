@@ -1,6 +1,5 @@
 import pygame
 from scene_manager import SceneManager
-
 from player import Player
 from config import SCREEN_WIDTH, SCREEN_HEIGHT, FPS
 
@@ -10,10 +9,8 @@ class Game:
         pygame.init()
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         pygame.display.set_caption("Itera Dungeon")
-
         logo = pygame.image.load("scripts/assets/logo.png")
         pygame.display.set_icon(logo)
-
         self.clock = pygame.time.Clock()
         self.running = True
         self.player = Player()

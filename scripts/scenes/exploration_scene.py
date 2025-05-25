@@ -8,16 +8,12 @@ from scenes.story_transition_scene import StoryTransitionScene
 class ExplorationScene(BaseScene):
     def __init__(self, game):
         super().__init__(game)
-        # Stop any currently playing sound
         pygame.mixer.stop()
-
-        # Load and play exploration background music
         self.exploration_music = pygame.mixer.Sound(
             "scripts/assets/audio/exploration.mp3"
         )
-        self.exploration_music.set_volume(0.4)  # Set volume to 40%
-        self.exploration_music.play(-1)  # Loop indefinitely during exploration
-
+        self.exploration_music.set_volume(0.4)
+        self.exploration_music.play(-1)
         self.player_speed = 5
         self.font = pygame.font.SysFont(None, 24)
         self.menu_active = False
@@ -30,13 +26,10 @@ class ExplorationScene(BaseScene):
         self.footstep_sound = pygame.mixer.Sound("scripts/assets/audio/Footstep.wav")
         self.footstep_cooldown = 0
         self.footstep_delay = 20
-
         self.floors = [FirstFloor(), SecondFloor(), ThirdFloor()]
         self.current_floor_index = 0
         self.current_floor = self.floors[self.current_floor_index]
-
         self.game.player.set_floor_abilities(self.current_floor_index)
-
         self.ground_color = (100, 70, 40)
         self.background_color = (135, 206, 235)
         self.first_floor_background = pygame.image.load(
@@ -46,7 +39,6 @@ class ExplorationScene(BaseScene):
             self.first_floor_background,
             (self.game.screen.get_width(), self.game.screen.get_height()),
         )
-
         self.second_floor_background = pygame.image.load(
             "scripts/assets/Background/Floor 2/explore.png"
         )
@@ -54,7 +46,6 @@ class ExplorationScene(BaseScene):
             self.second_floor_background,
             (self.game.screen.get_width(), self.game.screen.get_height()),
         )
-
         self.generic_background = pygame.Surface(
             (self.game.screen.get_width(), self.game.screen.get_height())
         )
@@ -128,7 +119,6 @@ class ExplorationScene(BaseScene):
                 next_floor_index
             ]
             new_exploration_scene.current_floor.player_pos[0] = 100
-            # Update player abilities (skill & ultimate) sesuai floor baru
             self.game.player.set_floor_abilities(next_floor_index)
 
             story_scene = StoryTransitionScene(
@@ -216,7 +206,6 @@ class ExplorationScene(BaseScene):
     def start_battle(self, enemy):
         from scenes.battle_scene.battle_scene import BattleScene
 
-        # Stop exploration music before starting the battle
         self.exploration_music.stop()
 
         self.current_floor.save_battle_position(self.current_floor.player_pos)

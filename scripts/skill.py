@@ -1,7 +1,41 @@
 import os
+from abc import ABC, abstractmethod
 
 
-class Skill:
+class BaseSkill(ABC):
+    def __init__(self, name, damage=0, cooldown=3.0, description=""):
+        self._name = name
+        self._damage = damage
+        self._cooldown = cooldown
+        self._description = description
+        self._cooldown_remaining = 0
+
+    @property
+    def name(self):
+        return self._name
+
+    @property
+    def damage(self):
+        return self._damage
+
+    @property
+    def cooldown(self):
+        return self._cooldown
+
+    @property
+    def description(self):
+        return self._description
+
+    @abstractmethod
+    def use(self):
+        pass
+
+    def update(self, delta_time=0.016):
+        if self._cooldown_remaining > 0:
+            self._cooldown_remaining -= delta_time
+
+
+class Skill(BaseSkill):
     def __init__(
         self,
         name,
@@ -11,13 +45,9 @@ class Skill:
         unlocked=False,
         required_level=1,
     ):
-        self.name = name
-        self.damage = damage
-        self.cooldown = cooldown
-        self.description = description
+        super().__init__(name, damage, cooldown, description)
         self.unlocked = unlocked
         self.required_level = required_level
-        self.cooldown_remaining = 0
 
     def can_unlock(self, player_level):
         return player_level >= self.required_level and not self.unlocked
@@ -26,23 +56,15 @@ class Skill:
         self.unlocked = True
 
     def use(self):
-        if self.cooldown_remaining <= 0:
-            self.cooldown_remaining = self.cooldown
-            return self.damage
+        if self._cooldown_remaining <= 0:
+            self._cooldown_remaining = self._cooldown
+            return self._damage
         return 0
 
-    def update(self, delta_time=0.016):
-        if self.cooldown_remaining > 0:
-            self.cooldown_remaining -= delta_time
 
-
-class Ultimate:
+class Ultimate(BaseSkill):
     def __init__(self, name, damage=0, cooldown=5.0, description=""):
-        self.name = name
-        self.damage = damage
-        self.cooldown = cooldown
-        self.description = description
-        self.cooldown_remaining = 0
+        super().__init__(name, damage, cooldown, description)
         self.frames = []
         self.animation_duration = 1.0
         self._load_frames()
@@ -54,14 +76,10 @@ class Ultimate:
         return self.frames
 
     def use(self):
-        if self.cooldown_remaining <= 0:
-            self.cooldown_remaining = self.cooldown
-            return self.damage
+        if self._cooldown_remaining <= 0:
+            self._cooldown_remaining = self._cooldown
+            return self._damage
         return 0
-
-    def update(self, delta_time=0.016):
-        if self.cooldown_remaining > 0:
-            self.cooldown_remaining -= delta_time
 
 
 class FireUltimate(Ultimate):

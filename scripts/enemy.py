@@ -1,19 +1,22 @@
 import pygame
+from scripts.player import Character
 
 
-class Enemy:
-    def __init__(self, x, y, size=40):
+class Enemy(Character):
+    def __init__(self, x, y, size=40, name="Enemy", hp=100, atk=5, defense=0, speed=1):
+        super().__init__(name, hp, atk, defense, speed)
         self.x = x
         self.y = y
         self.size = size
         self.rect = pygame.Rect(self.x, self.y - size, self.size, self.size)
-        self.hp = 100
-        self.damage = 5
         self.color = (255, 50, 50)
         self.image = None
         self.enemy_type = None
 
-    def update(self):
+    def attack(self):
+        return self._atk
+
+    def update(self, delta_time=0.1):
         self.rect.x = self.x
         self.rect.y = self.y - self.size
 
@@ -29,18 +32,16 @@ class Enemy:
 
 class Goblin(Enemy):
     def __init__(self, x, y):
-        super().__init__(x, y, size=200)
+        super().__init__(x, y, size=200, name="Goblin", atk=5)
         self.enemy_type = "Goblin"
-        self.damage = 5
         self.image = pygame.image.load("scripts/assets/Boss/goblin.png")
         self.image = pygame.transform.scale(self.image, (self.size, self.size))
 
 
 class Orc(Enemy):
     def __init__(self, x, y):
-        super().__init__(x, y, size=200)
+        super().__init__(x, y, size=200, name="Orc", atk=8)
         self.enemy_type = "Orc"
-        self.damage = 8
         self.image = pygame.image.load(
             "scripts/assets/Background/Floor 2/per-frame ogre_00000.png"
         )
@@ -49,6 +50,5 @@ class Orc(Enemy):
 
 class Dragon(Enemy):
     def __init__(self, x, y):
-        super().__init__(x, y, size=80)
+        super().__init__(x, y, size=80, name="Dragon", atk=12)
         self.enemy_type = "Dragon"
-        self.damage = 12

@@ -8,9 +8,7 @@ from utils.font_helper import FontHelper
 class OutdoorScene(BaseScene):
     def __init__(self, game):
         super().__init__(game)
-        # Stop any currently playing sound
         pygame.mixer.stop()
-
         self.font = FontHelper.getFont("Minecraft", 24)
         self.player_pos = [100, 450]
         self.player_speed = 5
@@ -18,11 +16,9 @@ class OutdoorScene(BaseScene):
         self.entrance_size = [80, 60]
         self.entrance_message_visible = False
         self.facing = "front"
-
         self.footstep_sound = pygame.mixer.Sound("scripts/assets/audio/Footstep.wav")
         self.footstep_cooldown = 0
         self.footstep_delay = 20
-
         self.background = pygame.image.load(
             "scripts/assets/Background/outdoor_scene.png"
         )
@@ -30,11 +26,9 @@ class OutdoorScene(BaseScene):
             self.background,
             (self.game.screen.get_width(), self.game.screen.get_height()),
         )
-
-        # Load and play outdoor background music
         self.outdoor_music = pygame.mixer.Sound("scripts/assets/audio/exploration.mp3")
-        self.outdoor_music.set_volume(0.4)  # Set volume to 40%
-        self.outdoor_music.play(-1)  # Loop indefinitely
+        self.outdoor_music.set_volume(0.4)
+        self.outdoor_music.play(-1)
 
     def handle_events(self):
         for event in pygame.event.get():
@@ -84,7 +78,6 @@ class OutdoorScene(BaseScene):
             self.enter_dungeon()
 
     def enter_dungeon(self):
-        # Stop outdoor music when entering the dungeon
         self.outdoor_music.stop()
 
         intro_story = [
@@ -103,7 +96,6 @@ class OutdoorScene(BaseScene):
     def render(self):
         self.game.screen.blit(self.background, (0, 0))
 
-        # Determine if the player is moving
         keys = pygame.key.get_pressed()
         moving = (
             keys[pygame.K_LEFT]

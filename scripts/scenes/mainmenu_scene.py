@@ -6,18 +6,13 @@ from utils.font_helper import FontHelper
 class MainMenuScene(BaseScene):
     def __init__(self, game):
         super().__init__(game)
-        # Stop any currently playing sound
         pygame.mixer.stop()
-
         self.font = FontHelper.getFont("Minecraft", 48)
-        self.options = ["Start", "Exit"]  # Removed "Rename" option
+        self.options = ["Start", "Exit"]
         self.selected = 0
-
-        # Load and play main menu background music
         self.main_menu_music = pygame.mixer.Sound("scripts/assets/audio/main menu.mp3")
-        self.main_menu_music.set_volume(0.5)  # Set volume to 50%
-        self.main_menu_music.play(-1)  # Loop indefinitely
-
+        self.main_menu_music.set_volume(0.5)
+        self.main_menu_music.play(-1)
         self.background = pygame.image.load(
             "scripts/assets/Background/main_menu_scene.png"
         )
@@ -39,19 +34,20 @@ class MainMenuScene(BaseScene):
                     if self.options[self.selected] == "Start":
                         from scenes.outdoor_scene import OutdoorScene
 
-                        self.game.scene_manager.go_to(OutdoorScene(self.game))
+                        self.game.change_scene(OutdoorScene(self.game))
                     elif self.options[self.selected] == "Exit":
                         self.game.running = False
+
+    def update(self):
+        pass
 
     def render(self):
         self.game.screen.blit(self.background, (0, 0))
 
-        screen_width = self.game.screen.get_width()
-        screen_height = self.game.screen.get_height()
         for i, option in enumerate(self.options):
             color = (255, 255, 0) if i == self.selected else (255, 255, 255)
             text = self.font.render(option, True, color)
-            text_rect = text.get_rect(
-                center=(screen_width // 2, screen_height // 2 + i * 60)
+            rect = text.get_rect(
+                center=(self.game.screen.get_width() // 2, 300 + i * 60)
             )
-            self.game.screen.blit(text, text_rect)
+            self.game.screen.blit(text, rect)
