@@ -18,6 +18,25 @@ class BattleScene(BaseScene):
 
         self.punch_sound = pygame.mixer.Sound("scripts/assets/audio/Punch.wav")
 
+        # Add sound effects for goblin, orc, and dragon battles
+        if hasattr(self.enemy, "enemy_type"):
+            if self.enemy.enemy_type == "Goblin":
+                self.goblin_sound = pygame.mixer.Sound(
+                    "scripts/assets/audio/goblin.mp3"
+                )
+                self.goblin_sound.set_volume(0.3)
+                self.goblin_sound.play(-1)
+            elif self.enemy.enemy_type == "Orc":
+                self.orc_sound = pygame.mixer.Sound("scripts/assets/audio/orc.mp3")
+                self.orc_sound.set_volume(0.3)
+                self.orc_sound.play(-1)
+            elif self.enemy.enemy_type == "Dragon":
+                self.dragon_sound = pygame.mixer.Sound(
+                    "scripts/assets/audio/dragon.mp3"
+                )
+                self.dragon_sound.set_volume(0.3)
+                self.dragon_sound.play(-1)
+
         self.player_image = pygame.image.load(
             "scripts/assets/Background/Floor 1 battle/border1_00000.png"
         )
@@ -225,3 +244,17 @@ class BattleScene(BaseScene):
 
         self.logger.render(self.game.screen)
         self.ui_renderer.render_buttons(self.game.screen, self.game.player)
+
+    def stop_battle_sounds(self):
+        # Stop any battle-specific sounds
+        if hasattr(self, "goblin_sound"):
+            self.goblin_sound.stop()
+        if hasattr(self, "orc_sound"):
+            self.orc_sound.stop()
+        if hasattr(self, "dragon_sound"):
+            self.dragon_sound.stop()
+
+    def on_exit(self):
+        # Ensure sounds are stopped when exiting the battle scene
+        self.stop_battle_sounds()
+        super().on_exit()
