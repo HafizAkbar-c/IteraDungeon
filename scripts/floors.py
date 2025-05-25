@@ -87,6 +87,7 @@ class SecondFloor(Floor):
             "Koridor semakin gelap dan lembab.",
             "Suara-suara aneh terdengar dari kejauhan.",
             "Sesuatu yang lebih kuat menunggumu di depan.",
+            "Kamu mempelajari Skill baru: Ice Spike dan Ultimate: Ice Storm.",
         ]
         super().__init__("Second Floor", "Orc", story_text, 500, 450)
         self.enemy = Orc(500, 590)
@@ -99,6 +100,7 @@ class ThirdFloor(Floor):
             "Udara terasa panas dan berat.",
             "Asap dan aura kematian menyelimuti sekitarmu.",
             "Dari kejauhan, kamu melihat siluet naga yang sedang tertidur...",
+            "Kamu mempelajari Skill baru: Lightning Bolt dan Ultimate: Thunderstorm.",
         ]
         super().__init__("Third Floor", "Dragon", story_text, 500, 450)
         self.enemy = Dragon(400, 600)
