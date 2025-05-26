@@ -8,5 +8,4 @@ def main():
     game.scene_manager.go_to(main_menu)
     game.run()
 
-
 main()
