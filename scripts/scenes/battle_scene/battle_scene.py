@@ -19,6 +19,13 @@ class BattleScene(BaseScene):
         self.done = False
 
         self.punch_sound = pygame.mixer.Sound("scripts/assets/audio/Punch.wav")
+        self.fire_skill = pygame.mixer.Sound("scripts/assets/audio/SkillFireball.mp3")
+        self.ice_skill = pygame.mixer.Sound("scripts/assets/audio/SkillEs.mp3")
+        self.lightning_skill = pygame.mixer.Sound("scripts/assets/audio/SkillPetir.mp3")
+        self.fire_ultimate = pygame.mixer.Sound("scripts/assets/audio/UltiFireball.mp3")
+        self.ice_ultimate = pygame.mixer.Sound("scripts/assets/audio/UltiEs.mp3")
+        self.lightning_ultimate = pygame.mixer.Sound("scripts/assets/audio/UltiPetir.mp3")
+
 
         if hasattr(self.enemy, "enemy_type"):
             if self.enemy.enemy_type == "Goblin":
@@ -109,7 +116,9 @@ class BattleScene(BaseScene):
         self.logger = BattleLogger(screen_width, screen_height)
         self.ui_renderer = UIRenderer(screen_width, screen_height)
         self.action_handler = BattleActionHandler(
-            game.player, enemy, exploration_scene, self.logger, self.punch_sound
+            game.player, enemy, exploration_scene, self.logger, self.punch_sound,
+            fire_ultimate=self.fire_ultimate,ice_ultimate=self.ice_ultimate,lightning_ultimate=self.lightning_ultimate,fire_skill=self.fire_skill,
+            ice_skill=self.ice_skill,lightning_skill=self.lightning_skill
         )
         self.animation_manager = UltimateAnimationManager(screen_width, screen_height)
 

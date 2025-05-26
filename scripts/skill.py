@@ -81,6 +81,23 @@ class Ultimate(BaseSkill):
             return self._damage
         return 0
 
+class FireSkill(Skill):
+    def __init__(self, damage=15, cooldown=3.0):
+        super().__init__(
+            "Fireball", damage, cooldown, "Api Yang Membakar Musuh"
+        )
+
+class IceSkill(Skill):
+    def __init__(self, damage=18, cooldown=3.0):
+        super().__init__(
+            "Ice Spike", damage, cooldown, "Es yang Membekukan Musuh"
+        )
+
+class LightningSkill(Skill):
+    def __init__(self, damage=20, cooldown=3.0):
+        super().__init__(
+            "Lightning Bolt", damage, cooldown, "Listrik yang Menyambar Musuh"
+        )
 
 class FireUltimate(Ultimate):
     def __init__(self, damage=30, cooldown=5.0):
@@ -99,18 +116,17 @@ class FireUltimate(Ultimate):
             "ulti-frame-5.jpg",
             "ulti-frame-6.jpg",
         ]
+        
         for frame_file in frames_files:
             frame_path = os.path.join(base_path, frame_file)
             if os.path.exists(frame_path):
                 self.frames.append(frame_path)
-
 
 class IceUltimate(Ultimate):
     def __init__(self, damage=35, cooldown=5.0):
         super().__init__(
             "Blizzard", damage, cooldown, "Freezes all enemies in the area"
         )
-
     def _load_frames(self):
         self.frames = []
         base_path = "scripts/assets/Main Character/Ulti 2"
@@ -126,7 +142,6 @@ class IceUltimate(Ultimate):
             frame_path = os.path.join(base_path, frame_file)
             if os.path.exists(frame_path):
                 self.frames.append(frame_path)
-
 
 class LightningUltimate(Ultimate):
     def __init__(self, damage=40, cooldown=5.0):

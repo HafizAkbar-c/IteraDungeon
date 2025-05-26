@@ -1,6 +1,5 @@
 import pygame
 
-
 class BattleLogger:
     def __init__(self, screen_width, screen_height):
         self.battle_log = ["Pertempuran dimulai!"]
