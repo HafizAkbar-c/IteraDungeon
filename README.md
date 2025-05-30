@@ -1,8 +1,8 @@
+<h1 align="center">Itera Dungeon</h1>
+
 <p align="center">
   <img src="https://raw.githubusercontent.com/HafizAkbar-c/IteraDungeon/refs/heads/main/scripts/assets/logo.png" width="256px">
 </p>
-
-<h1 align="center">Itera Dungeon</h1>
 
 ## Deskripsi Game
 ITERA DUNGEON merupakan sebuah game adventure dengan dengan tema RPG yang menerapkan sistem battle Turn-Base. Pemain akan memainkan peran mahasiswa baru itera yang jatuh ke ruangan bawah tanah tersembunyi di itera dan berjuang untuk kembali ke permukaan. Pemain akan melakukan eksplorasi untuk mencari jalan keluar dimana pemain akan menghadapi musuh yang muncul sebagai rintangan apabila ingin naik ke lantai selanjutnya.
@@ -14,7 +14,7 @@ ITERA DUNGEON merupakan sebuah game adventure dengan dengan tema RPG yang menera
 1. Clone repositori ini menggunakan git
 ```sh
 git clone https://github.com/HafizAkbar-c/IteraDungeon.git
-``
+```
 2. Masuk ke folder game
 ```sh
 cd IteraDungeon
