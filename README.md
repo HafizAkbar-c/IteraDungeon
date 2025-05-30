@@ -45,3 +45,4 @@ python scripts/main.py
 ## Reference
 - Fear and Hunger
 - Honkai: Star Rail
+- Omori
